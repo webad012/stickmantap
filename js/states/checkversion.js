@@ -30,14 +30,15 @@ StickmanTapGame.CheckVersion.prototype = {
     checkVersion: function(api_url)
     {
 //        $.ajax({
-//            type: "POST",
+////            type: "POST",
 //            url: api_url,
 //            data: {
 //                action: 'GetCurrentVersion',
 //                version: StickmanTapGameVersion
 //            },
+//            jsonp: "callback",
 //            dataType: 'jsonp',
-//            async: true,
+////            async: true,
 //            success: function(response){
 //                console.log('success');
 //                console.log(response);
@@ -108,15 +109,54 @@ StickmanTapGame.CheckVersion.prototype = {
 //                    }
 //        );
 
-        xmlhttp.onreadystatechange=function()
-            {
-                console.log(xmlhttp.responseText);
-//            if (xmlhttp.readyState==4 && xmlhttp.status==200)
-//              {
-//              document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
-//              }
+//        xmlhttp.onreadystatechange=function()
+//            {
+//                console.log(xmlhttp.responseText);
+////            if (xmlhttp.readyState==4 && xmlhttp.status==200)
+////              {
+////              document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+////              }
+//            }
+//          xmlhttp.open("GET",api_url,true);
+//          xmlhttp.send();
+
+//        $.getJSON(api_url+"?callback=?", function(result){
+//            //response data are now in the result variable
+//            alert(result);
+//         });
+
+//        var pm_url = 'http://twitter.com/status';
+//        pm_url += '/user_timeline/stephenfry.json';
+//        pm_url += '?count=10&callback=photos';
+        var pm_url = api_url;
+//        api_url += '?callback=asd';
+        $.ajax({
+            url: api_url+"?action=GetCurrentVersion",
+//            data: {
+//                action: 'GetCurrentVersion',
+//                version: StickmanTapGameVersion
+//            },
+//            get_data: {
+//                action: 'GetCurrentVersion',
+//                version: StickmanTapGameVersion
+//            },
+            dataType: 'jsonp',
+//            jsonpCallback: 'asd',
+            jsonp: 'callback',
+            success: function(response){
+                console.log('success');
+                console.log(response);
+            },
+            error: function(xhr){
+                console.log('failure');
+                console.log(xhr.responseText);
+                console.log(this.url);
             }
-          xmlhttp.open("GET",api_url,true);
-          xmlhttp.send();
+        });
+    
+//        function asd (data) {
+////            alert(data);
+//            console.log(data);
+//        };
     }
 };
