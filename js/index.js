@@ -1,6 +1,6 @@
 /* global Phaser */
 
-var StickmanTapGameVersion = 0.1;
+var StickmanTapGameOffline = false;
 
 var StickmanTapGame = StickmanTapGame || {};
 

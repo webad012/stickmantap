@@ -1,4 +1,4 @@
-/* global StickmanTapGameVersion */
+/* global StickmanTapGameVersion, StickmanTapDefaultConf */
 
 var StickmanTapGame = StickmanTapGame || {};
  
@@ -14,9 +14,11 @@ StickmanTapGame.CheckVersion.prototype = {
         var api_url = localstorage.getData('apiUrl');
         if(!api_url)
         {
-            api_url = 'http://localhost/stickmantap/api.php';
+            api_url = StickmanTapDefaultConf.apiUrl;
             localstorage.setData('apiUrl', api_url);
         }
+        
+        this.gameVersion = StickmanTapDefaultConf.gameVersion;
         
         this.checkVersion(api_url);
         
@@ -29,107 +31,8 @@ StickmanTapGame.CheckVersion.prototype = {
     
     checkVersion: function(api_url)
     {
-//        $.ajax({
-////            type: "POST",
-//            url: api_url,
-//            data: {
-//                action: 'GetCurrentVersion',
-//                version: StickmanTapGameVersion
-//            },
-//            jsonp: "callback",
-//            dataType: 'jsonp',
-////            async: true,
-//            success: function(response){
-//                console.log('success');
-//                console.log(response);
-////                if(response.status === "success")
-////                {
-////                    var select_team = parentDiv.find('.select-team');
-////
-////                    if(response.message !== undefined)
-////                    {
-////                        var json_result = jQuery.parseJSON(response.message);
-////                        for(var i=0; i<json_result.length; i++)
-////                        {
-////                            select_team.append($("<option></option>")
-////                                        .attr("value",json_result[i].id)
-////                                        .text(json_result[i].name)); 
-////                        }
-////                    }
-////                }
-////                else
-////                {
-////                    alert("failure: "+response.message);
-////                }
-//            },
-//            error: function(xhr){
-//                console.log('failure');
-//                console.log(xhr.responseText);
-//                console.log(this.url);
-////                alert("failure: "+xhr.responseText+ " - " + this.url);
-//            }
-//        });
+        var thisGame = this;
         
-//        $.ajax({
-//            type: "POST",
-//            url: api_url,
-//            data:{
-//                action: 'GetCurrentVersion',
-//                version: StickmanTapGameVersion
-//            },
-//            async:true,
-//            dataType : 'jsonp',   //you may use jsonp for cross origin request
-//            crossDomain:true,
-//            success: function(data, status, xhr) {
-//                console.log('success');
-//                console.log(data);
-//                console.log(status);
-//                console.log(xhr);
-////                alert(xhr.getResponseHeader('Location'));
-//            },
-//            error: function(data, status, xhr) {
-//                console.log('error');
-//                console.log(data);
-//                console.log(status);
-//                console.log(xhr.getResponseHeader('Location'));
-//                console.log(xhr);
-////                alert(xhr.getResponseHeader('Location'));
-//            }
-//        });
-
-//        $.getJSON(api_url, 
-//                    "method=mobileGetData", 
-//                    function(response, status, xhr){
-//                        console.log(response);
-//                        console.log(status);
-//                        console.log(xhr);
-////                        for(var key in response[0]){
-////                            alert(key + ": " + response[0][key]);
-////                        }
-//                    }
-//        );
-
-//        xmlhttp.onreadystatechange=function()
-//            {
-//                console.log(xmlhttp.responseText);
-////            if (xmlhttp.readyState==4 && xmlhttp.status==200)
-////              {
-////              document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
-////              }
-//            }
-//          xmlhttp.open("GET",api_url,true);
-//          xmlhttp.send();
-
-//        $.getJSON(api_url+"?callback=?", function(result){
-//            //response data are now in the result variable
-//            alert(result);
-//         });
-
-//        var pm_url = 'http://twitter.com/status';
-//        pm_url += '/user_timeline/stephenfry.json';
-//        pm_url += '?count=10&callback=photos';
-        var pm_url = api_url;
-//        api_url += '?callback=asd';
         $.ajax({
             url: api_url+"?action=GetCurrentVersion",
 //            data: {
@@ -141,22 +44,72 @@ StickmanTapGame.CheckVersion.prototype = {
 //                version: StickmanTapGameVersion
 //            },
             dataType: 'jsonp',
-//            jsonpCallback: 'asd',
             jsonp: 'callback',
             success: function(response){
-                console.log('success');
-                console.log(response);
+//                console.log('success');
+//                console.log(response);
+                thisGame.onSuccess(response);
+//                
             },
             error: function(xhr){
-                console.log('failure');
-                console.log(xhr.responseText);
-                console.log(this.url);
+//                console.log('failure');
+//                console.log(xhr.responseText);
+                thisGame.onFailure("1: "+xhr.responseText);
             }
         });
+    },
     
-//        function asd (data) {
-////            alert(data);
-//            console.log(data);
-//        };
+    onSuccess: function (response)
+    {
+        if(typeof response.gameVersion !== 'undefined')
+        {
+            if(response.gameVersion === this.gameVersion)
+            {
+                this.state.start('Preload');
+            }
+            else
+            {
+                var text1 = this.game.add.text(this.game.world.centerX, 
+                                        100, 
+                                        "There is a new version of application", 
+                                        { font: "20px Arial", fill: "#000"});
+                text1.anchor.setTo(0.5, 0.5);
+
+                if(typeof response.download_url !== 'undefined')
+                {
+                    var text2 = this.game.add.text(this.game.world.centerX, 
+                                            150, 
+                                            "You can download it from:", 
+                                            { font: "20px Arial", fill: "#000"});
+                    text2.anchor.setTo(0.5, 0.5);
+                    var text3 = this.game.add.text(this.game.world.centerX, 
+                                            200, 
+                                            response.download_url, 
+                                            { font: "20px Arial", fill: "#000"});
+                    text3.anchor.setTo(0.5, 0.5);
+                }
+                else
+                {
+                    var text2 = this.game.add.text(this.game.world.centerX, 
+                                            150, 
+                                            "There was error getting download url", 
+                                            { font: "20px Arial", fill: "#000"});
+                    text2.anchor.setTo(0.5, 0.5);
+                }
+            }
+        }
+        else
+        {
+            this.onFailure(JSON.stringify(response));
+        }
+    },
+    
+    onFailure: function(reason)
+    {
+        if (window.confirm("There was problem with connection:\n"+reason+"\nDo you want to continue offline?")) 
+        {
+            StickmanTapGameOffline = true;
+            StickmanTapGame.state.start('Preload');
+        }
     }
 };
