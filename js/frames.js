@@ -230,3 +230,44 @@ var SettingsFrame = function(player)
         thisFrame.frame.destroy();
     }
 };
+
+var StatisticsFrame = function(maxGameLevel)
+{
+    
+    this.frame = StickmanTapGame.game.add.sprite(StickmanTapGame.game.world.centerX, 
+                                                StickmanTapGame.game.world.centerY, 
+                                                'frame', 
+                                                StickmanTapGame.characterMenuGroup);
+    this.frame.anchor.setTo(0.5, 0.5);
+    this.frame.inputEnabled = true;
+    
+    var marginX = StickmanTapGame.game.world.centerX-130;
+
+    this.maxGameLevelLabel = StickmanTapGame.game.add.text(marginX, 
+                                    StickmanTapGame.game.world.centerY-200, 
+                                    'Max game level: '
+                                    +InfiniteFormulas.humanReadableSize(maxGameLevel), 
+                                    { font: '20px Arial', fill: '#000' });
+    this.maxGameLevelLabel.anchor.setTo(0, 0.5);
+    
+    
+    this.frameLabel = StickmanTapGame.game.add.text(StickmanTapGame.game.world.centerX, 
+                                                    StickmanTapGame.game.world.centerY+200, 
+                                                    'Click outside to continue', 
+                                                    { font: '15px Arial', fill: '#000' });
+    this.frameLabel.anchor.setTo(0.5, 0.5);
+
+    this.frameShown = true;
+    this.frameChildren = [this.frameLabel, this.maxGameLevelLabel];
+    
+    this.close = function()
+    {
+        close(this);
+    };
+    
+    function close(thisFrame)
+    {
+        thisFrame.frameChildren.forEach(function(element){element.destroy();});
+        thisFrame.frame.destroy();
+    }
+};

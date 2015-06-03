@@ -86,6 +86,10 @@ StickmanTapGame.Game.prototype = {
         this.profileButton.anchor.setTo(0.5, 0.5);
         this.profileButton.inputEnabled = true;
         this.profileButton.events.onInputDown.add(this.onProfileButtonClick, this);
+        this.settingsButton = this.game.add.sprite(175, this.game.world.centerY+200, 'statistics', this.bottomButtonsGroup);
+        this.settingsButton.anchor.setTo(0.5, 0.5);
+        this.settingsButton.inputEnabled = true;
+        this.settingsButton.events.onInputDown.add(this.onStatisticsButtonClick, this);
         this.settingsButton = this.game.add.sprite(300, this.game.world.centerY+200, 'settings', this.bottomButtonsGroup);
         this.settingsButton.anchor.setTo(0.5, 0.5);
         this.settingsButton.inputEnabled = true;
@@ -182,6 +186,12 @@ StickmanTapGame.Game.prototype = {
     onSettingsButtonClick: function()
     {
         this.frame = new SettingsFrame(this.player);
+        this.frameShown = true;
+    },
+    
+    onStatisticsButtonClick: function()
+    {
+        this.frame = new StatisticsFrame(this.maxGameLevel);
         this.frameShown = true;
     },
     
@@ -307,10 +317,10 @@ StickmanTapGame.Game.prototype = {
         this.player.attackLooper = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.playerAttack, this);
         this.player.attackLooper.timer.start();
         
-        if(this.gameLevel > this.maxGameLevel)
-        {
-            this.newMaxGameLevel();
-        }
+//        if(this.gameLevel > this.maxGameLevel)
+//        {
+//            this.newMaxGameLevel();
+//        }
         
         if(this.wasRevertedInLevel)
         {
@@ -363,7 +373,7 @@ StickmanTapGame.Game.prototype = {
         this.localStorage.setData('gameLevel', new_level);
         
         var fadeOutTween = this.game.add.tween(this.player.sprite).to( 
-                            { alpha: 0 }, 1000, 
+                            { alpha: 0 }, 500, 
                             Phaser.Easing.Linear.None, true);
         var thisGame = this;
         fadeOutTween.onComplete.add(function(){
@@ -402,8 +412,13 @@ StickmanTapGame.Game.prototype = {
         
         this.localStorage.setData('gameLevel', levelNum);
         
+        if(levelNum > this.maxGameLevel)
+        {
+            this.newMaxGameLevel();
+        }
+        
         var fadeOutTween = this.game.add.tween(this.monster.sprite).to( 
-                            { alpha: 0 }, 1000, 
+                            { alpha: 0 }, 500, 
                             Phaser.Easing.Linear.None, true);
         var thisGame = this;
         fadeOutTween.onComplete.add(function(){

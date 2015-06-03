@@ -26,19 +26,10 @@ if(isset($callback))
 
     if($action == 'GetCurrentVersion')
     {
-        $sql =<<<EOF
-                SELECT value from conf_data WHERE name='current_version';
-EOF;
+        $current_version = getCurrentVersionNum($db);
+        $download_url = getDownloadUrl($db);
 
-        $ret = pg_query($db, $sql);
-        if(!$ret){
-            throw new Exception('error in getting data from database');
-        }
-        $row = pg_fetch_row($ret);
-        
-        $current_version = $row[0];
-
-        $data = '{"status":"success","gameVersion":'.$current_version.'}';
+        $data = '{"status":"success","gameVersion":'.$current_version.',"downloadUrl":"'.$download_url.'"}';
         echo $callback.'('.$data.');';
     }
     else
@@ -47,11 +38,47 @@ EOF;
         header('Content-Type: application/json; charset=utf8');
         echo $data;
     }
+    
+    pg_close($db);
 }
 else
 {
     $data = '{"status":"failure","message":"bad action1"}';
     header('Content-Type: application/json; charset=utf8');
     echo $data;
+}
+
+function getCurrentVersionNum($db)
+{
+    $sql =<<<EOF
+        SELECT value from conf_data WHERE name='current_version';
+EOF;
+
+    $ret = pg_query($db, $sql);
+    if(!$ret){
+        throw new Exception('error in getting data from database');
+    }
+    $row = pg_fetch_row($ret);
+
+    $current_version = $row[0];
+    
+    return $current_version;
+}
+
+function getDownloadUrl($db)
+{
+    $sql =<<<EOF
+        SELECT value from conf_data WHERE name='download_url';
+EOF;
+
+    $ret = pg_query($db, $sql);
+    if(!$ret){
+        throw new Exception('error in getting data from database');
+    }
+    $row = pg_fetch_row($ret);
+
+    $download_url = $row[0];
+    
+    return $download_url;
 }
 

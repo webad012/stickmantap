@@ -20,6 +20,12 @@ StickmanTapGame.CheckVersion.prototype = {
         
         this.gameVersion = StickmanTapDefaultConf.gameVersion;
         
+        var text1 = this.game.add.text(this.game.world.width-10, 
+                                this.game.world.height-10, 
+                                this.gameVersion, 
+                                { font: "20px Arial", fill: "#000"});
+        text1.anchor.setTo(1, 1);
+        
         this.checkVersion(api_url);
         
 //        this.state.start('Preload');
@@ -69,14 +75,14 @@ StickmanTapGame.CheckVersion.prototype = {
             }
             else
             {
-                var text1 = this.game.add.text(this.game.world.centerX, 
-                                        100, 
-                                        "There is a new version of application", 
-                                        { font: "20px Arial", fill: "#000"});
-                text1.anchor.setTo(0.5, 0.5);
-
-                if(typeof response.download_url !== 'undefined')
+                if(typeof response.downloadUrl !== 'undefined')
                 {
+                    var text1 = this.game.add.text(this.game.world.centerX, 
+                                            100, 
+                                            "There is a new version of application", 
+                                            { font: "20px Arial", fill: "#000"});
+                    text1.anchor.setTo(0.5, 0.5);
+                    
                     var text2 = this.game.add.text(this.game.world.centerX, 
                                             150, 
                                             "You can download it from:", 
@@ -84,17 +90,28 @@ StickmanTapGame.CheckVersion.prototype = {
                     text2.anchor.setTo(0.5, 0.5);
                     var text3 = this.game.add.text(this.game.world.centerX, 
                                             200, 
-                                            response.download_url, 
-                                            { font: "20px Arial", fill: "#000"});
+                                            response.downloadUrl, 
+                                            { font: "20px Arial", fill: "#00F"});
                     text3.anchor.setTo(0.5, 0.5);
+                    text3.inputEnabled = true;
+                    text3.events.onInputDown.add(function(){
+                        window.open(response.downloadUrl, '_blank');
+                    }, this);
+                    
+                    var text4 = this.game.add.text(this.game.world.centerX, 
+                                            300, 
+                                            "Or continue offline", 
+                                            { font: "20px Arial", fill: "#000"});
+                    text4.anchor.setTo(0.5, 0.5);
+                    text4.inputEnabled = true;
+                    text4.events.onInputDown.add(function(){
+                        StickmanTapGameOffline = true;
+                        this.state.start('Preload');
+                    }, this);
                 }
                 else
                 {
-                    var text2 = this.game.add.text(this.game.world.centerX, 
-                                            150, 
-                                            "There was error getting download url", 
-                                            { font: "20px Arial", fill: "#000"});
-                    text2.anchor.setTo(0.5, 0.5);
+                    this.onFailure("Error getting download url");
                 }
             }
         }
