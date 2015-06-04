@@ -362,7 +362,7 @@ StickmanTapGame.Game.prototype = {
                             this.player.sprite.y-100, 
                             this.player.sprite.y-200,
                             "Died",
-                            { font: "25px Arial", fill: "#F00"});
+                            { font: "30px Arial", fill: "#F00", stroke: "#000", strokeThickness: 1});
         
         var new_level = this.gameLevel-1;
         if(new_level <= 0)
@@ -387,21 +387,23 @@ StickmanTapGame.Game.prototype = {
     {
         this.inAnimation = true;
         
+        var monster_gold_drop = this.monster.getGoldDrop();
+        
         this.animatePopuptext(this.monster.sprite.x, 
                         this.monster.sprite.x, 
                         this.monster.sprite.y-100, 
                         this.monster.sprite.y-200,
-                        "Died",
-                        { font: "25px Arial", fill: "#F00"});
+                        "+"+InfiniteFormulas.humanReadableSize(monster_gold_drop),
+                        { font: "30px Arial", fill: "#FF0", stroke: "#000", strokeThickness: 1});
+
+        this.player.coins += monster_gold_drop;
+        this.localStorage.setData('playerCoins', this.player.coins);
         
         var new_level = this.gameLevel;
         if(this.wasRevertedInLevel === false)
         {
             new_level++;
         }
-
-        this.player.coins += this.monster.getGoldDrop();
-        this.localStorage.setData('playerCoins', this.player.coins);
         
         this.animateLoadLevel(new_level);
     },
@@ -480,7 +482,7 @@ StickmanTapGame.Game.prototype = {
         var timePerMonsterInSec = Math.ceil(monsterHealth/playerDPS);
         
         var monstersPosiblyKilled = Math.floor(offTimeInSec/timePerMonsterInSec);
-        monstersPosiblyKilled = Math.floor(monstersPosiblyKilled/2);
+        monstersPosiblyKilled = Math.floor(monstersPosiblyKilled/10);
         
         var resultMadeCoinsWhileOffGame = monstersPosiblyKilled * monsterGoldDrop;
         

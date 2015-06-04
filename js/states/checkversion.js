@@ -126,7 +126,11 @@ StickmanTapGame.CheckVersion.prototype = {
         if (window.confirm("There was problem with connection:\n"+reason+"\nDo you want to continue offline?")) 
         {
             StickmanTapGameOffline = true;
-            StickmanTapGame.state.start('Preload');
+            this.state.start('Preload');
+        }
+        else
+        {
+            navigator.app.exitApp();
         }
     }
 };
