@@ -106,7 +106,7 @@ StickmanTapGame.Game.prototype = {
     update: function()
     {
         this.dpsCheckTimer += this.game.time.elapsed;
-        if ( this.dpsCheckTimer >= 200 )
+        if ( this.dpsCheckTimer >= 500 )
         {
             this.dpsCheckTimer = 0;
             var dps_sum = 0;
@@ -310,12 +310,18 @@ StickmanTapGame.Game.prototype = {
         this.backgroundGroup.add(this.background);
         
         this.monster = new Monster(this.gameLevel, this.monster_spritesheets[monster_spritesheet_index]);
-        this.monster.attackLooper = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.monsterAttack, this);
-        this.monster.attackLooper.timer.start();
         this.monsterGroup.add(this.monster.sprite);
+        if(gameLevel%10 === 0)
+        {
+            this.monster.attackLooper = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.monsterAttack, this);
+            this.monster.attackLooper.timer.start();
+        }
         
-        this.player.attackLooper = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.playerAttack, this);
-        this.player.attackLooper.timer.start();
+        if(typeof this.player.attackLooper === 'undefined')
+        {
+            this.player.attackLooper = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.playerAttack, this);
+            this.player.attackLooper.timer.start();
+        }
         
 //        if(this.gameLevel > this.maxGameLevel)
 //        {
@@ -347,7 +353,10 @@ StickmanTapGame.Game.prototype = {
 
             if(this.player.health <= 0)
             {
-                this.monster.attackLooper.timer.stop();
+                if(typeof this.monster.attackLooper !== 'undefined')
+                {
+                    this.monster.attackLooper.timer.stop();
+                }
                 this.playerDied();
             }
         }
@@ -416,7 +425,7 @@ StickmanTapGame.Game.prototype = {
         
         if(levelNum > this.maxGameLevel)
         {
-            this.newMaxGameLevel();
+            this.newMaxGameLevel(levelNum);
         }
         
         var fadeOutTween = this.game.add.tween(this.monster.sprite).to( 
@@ -456,35 +465,17 @@ StickmanTapGame.Game.prototype = {
         var offTimeInSec = currentTimeInSec-lastActiveTimeInSec;
         
         var playerDPS = InfiniteFormulas.getPlayerDamage(playerLevel);
-        var playerHealth = InfiniteFormulas.getPlayerMaxHealth(playerLevel);
 
-        var monsterHealth = 0;
-        var monsterGoldDrop = 0;
-        var monsterDamage = 0;
-        var timePerMonsterInSec = 0;
-        var foundMonster = false;
-        while(!foundMonster)
-        {
-            monsterHealth = InfiniteFormulas.getMonsterMaxHealth(gameLevel);
-            monsterGoldDrop = InfiniteFormulas.getMonsterGoldDrop(gameLevel);
-            monsterDamage = InfiniteFormulas.getMonsterDamage(gameLevel);
-            
-            timePerMonsterInSec = Math.ceil(monsterHealth/playerDPS);
-            var timePerPlayerInSec = Math.ceil(playerHealth/monsterDamage);
-            if(timePerMonsterInSec < timePerPlayerInSec)
-            {
-                foundMonster = true;
-                break;
-            }
-            gameLevel--;
-        }
+        var monsterLevel = this.getMonsterLevelDefeatableByPlayer(gameLevel, playerLevel);
+        var monsterHealth = InfiniteFormulas.getMonsterMaxHealth(monsterLevel);
+        var monsterGoldDrop = InfiniteFormulas.getMonsterGoldDrop(gameLevel);
         
         var timePerMonsterInSec = Math.ceil(monsterHealth/playerDPS);
         
         var monstersPosiblyKilled = Math.floor(offTimeInSec/timePerMonsterInSec);
-        monstersPosiblyKilled = Math.floor(monstersPosiblyKilled/10);
         
         var resultMadeCoinsWhileOffGame = monstersPosiblyKilled * monsterGoldDrop;
+        resultMadeCoinsWhileOffGame = Math.floor(resultMadeCoinsWhileOffGame/10);
         
         if(resultMadeCoinsWhileOffGame > 0)
         {
@@ -493,7 +484,7 @@ StickmanTapGame.Game.prototype = {
         }
     },
     
-    newMaxGameLevel: function()
+    newMaxGameLevel: function(levelNum)
     {
         this.animatePopuptext(this.game.world.centerX,
                                 this.game.world.centerX,
@@ -502,8 +493,33 @@ StickmanTapGame.Game.prototype = {
                                 'New max game level',
                                 { font: "30px Arial", fill: "#00F"});
    
-        this.maxGameLevel = this.gameLevel;
+        this.maxGameLevel = levelNum;
         this.localStorage.setData('maxGameLevel', this.maxGameLevel);
+    },
+    
+    getMonsterLevelDefeatableByPlayer: function(assumedMaxMonsterLevel, playerLevel)
+    {
+        var monsterLevel = assumedMaxMonsterLevel;
+        var playerDPS = InfiniteFormulas.getPlayerDamage(playerLevel);
+        var playerHealth = InfiniteFormulas.getPlayerMaxHealth(playerLevel);
+        
+        var foundMonster = false;
+        while(!foundMonster)
+        {
+            var monsterHealth = InfiniteFormulas.getMonsterMaxHealth(monsterLevel);
+            var monsterDamage = InfiniteFormulas.getMonsterDamage(monsterLevel);
+            
+            var timePerMonsterInSec = Math.ceil(monsterHealth/playerDPS);
+            var timePerPlayerInSec = Math.ceil(playerHealth/monsterDamage);
+            if(monsterLevel%10 !== 0 || timePerMonsterInSec < timePerPlayerInSec)
+            {
+                foundMonster = true;
+                break;
+            }
+            monsterLevel--;
+        }
+        
+        return monsterLevel;
     }
 };
 

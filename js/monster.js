@@ -53,7 +53,10 @@ function Monster(levelNum, spritesheet_obj){
     
     this.destroy = function()
     {
-        this.attackLooper.timer.stop();
+        if(typeof this.attackLooper !== 'undefined')
+        {
+            this.attackLooper.timer.stop();
+        }
         this.sprite.destroy();
     };
 }

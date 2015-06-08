@@ -27,8 +27,6 @@ StickmanTapGame.CheckVersion.prototype = {
         text1.anchor.setTo(1, 1);
         
         this.checkVersion(api_url);
-        
-//        this.state.start('Preload');
     },
     
     update: function()
@@ -38,7 +36,7 @@ StickmanTapGame.CheckVersion.prototype = {
     checkVersion: function(api_url)
     {
         var thisGame = this;
-        
+                
         $.ajax({
             url: api_url+"?action=GetCurrentVersion",
 //            data: {
@@ -52,14 +50,10 @@ StickmanTapGame.CheckVersion.prototype = {
             dataType: 'jsonp',
             jsonp: 'callback',
             success: function(response){
-//                console.log('success');
-//                console.log(response);
                 thisGame.onSuccess(response);
 //                
             },
             error: function(xhr){
-//                console.log('failure');
-//                console.log(xhr.responseText);
                 thisGame.onFailure("1: "+xhr.responseText);
             }
         });
