@@ -85,7 +85,9 @@ StickmanTapGame.Register.prototype = {
                 stickmanAjax('Register', function(response){
                     localThis.onRegisterSuccess(response);
                 },
-                "username="+this.usernameField.text+"&password="+this.passwordField.text);
+                "username="+this.usernameField.text
+                        +"&password="+this.passwordField.text
+                        +"&lastaction="+Math.floor(Date.now() / 1000));
             }
         }, this);
         
@@ -98,6 +100,10 @@ StickmanTapGame.Register.prototype = {
     
     onRegisterSuccess: function(response)
     {
-        console.log('onRegisterSuccess');
+        alert(response.message);
+        if(response.message === 'success')
+        {
+            StickmanTapGame.game.state.start('Game');
+        }
     }
 };

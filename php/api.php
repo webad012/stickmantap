@@ -27,6 +27,19 @@ if(isset($callback))
         $data = '{"status":"success","gameVersion":'.$current_version.',"downloadUrl":"'.$download_url.'"}';
         echo $callback.'('.$data.');';
     }
+    else if($action == 'Register')
+    {
+        $username = filter_input(INPUT_GET, 'username');
+        $password = filter_input(INPUT_GET, 'password');
+        $lastaction = filter_input(INPUT_GET, 'lastaction');
+        
+        $password = md5($password);
+        
+        $message = registerUser($db, $username, $password, $lastaction);
+        
+        $data = '{"status":"success","message":"'.$message.'"}';
+        echo $callback.'('.$data.');';
+    }
     else
     {
         $data = '{"status":"failure","message":"bad action2"}';

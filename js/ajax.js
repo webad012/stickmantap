@@ -14,14 +14,13 @@ function stickmanAjax(action, success_function, parameters)
     api_url += "?action="+action;
     if(typeof parameters !== "undefined" && parameters !== "")
     {
-        api_url += "&params="+parameters;
+        api_url += "&"+parameters;
     }
-    
+        
     $.ajax({
         url: api_url,
         dataType: 'jsonp',
         jsonp: 'callback',
-//        success: success_function,
         success: function(response){
             if(response.status === 'success')
             {
