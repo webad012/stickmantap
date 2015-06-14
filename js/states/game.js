@@ -311,7 +311,7 @@ StickmanTapGame.Game.prototype = {
         
         this.monster = new Monster(this.gameLevel, this.monster_spritesheets[monster_spritesheet_index]);
         this.monsterGroup.add(this.monster.sprite);
-        if(gameLevel%10 === 0)
+        if(gameLevel%5 === 0)
         {
             this.monster.attackLooper = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.monsterAttack, this);
             this.monster.attackLooper.timer.start();
@@ -511,7 +511,7 @@ StickmanTapGame.Game.prototype = {
             
             var timePerMonsterInSec = Math.ceil(monsterHealth/playerDPS);
             var timePerPlayerInSec = Math.ceil(playerHealth/monsterDamage);
-            if(monsterLevel%10 !== 0 || timePerMonsterInSec < timePerPlayerInSec)
+            if(monsterLevel%5 !== 0 || timePerMonsterInSec < timePerPlayerInSec)
             {
                 foundMonster = true;
                 break;

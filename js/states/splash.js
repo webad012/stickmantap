@@ -29,7 +29,9 @@ StickmanTapGame.Splash.prototype = {
                                                 { font: "20px Arial", fill: "#000"});
         this.ww.anchor.setTo(0.5, 0.5);
         
-        this.game.input.onDown.add(function(){this.state.start('Game');}, this);
+        this.game.input.onDown.add(function(){
+            this.state.start('Login');
+        }, this);
     },
     
     update: function()

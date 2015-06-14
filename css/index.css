@@ -113,3 +113,13 @@ h1 {
     animation:fade 3000ms infinite;
     -webkit-animation:fade 3000ms infinite;
 }
+
+/*#register-dialog
+{
+    border: 2px solid black;
+}*/
+/*.ui-dialog
+{
+    border: 2px solid black;
+    background-color: white;
+}*/

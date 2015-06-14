@@ -29,11 +29,6 @@ var ProfileFrame = function(player)
                                 { font: '15px Arial', fill: '#000' });
     this.levelUpgradeCost.anchor.setTo(0, 0.5);
     refreshTexts(this);
-    
-//    this.logInOutLabel = StickmanTapGame.game.add.text(60, 180, '', { font: '20px Arial', fill: '#000' });
-//    this.logInOutLabel.anchor.setTo(0, 0.5);
-//    this.RegisterLabel = StickmanTapGame.game.add.text(60, 180, '', { font: '20px Arial', fill: '#000' });
-//    this.RegisterLabel.anchor.setTo(0, 0.5);
 
     this.frameLabel = StickmanTapGame.game.add.text(StickmanTapGame.game.world.centerX, 
                                                     StickmanTapGame.game.world.centerY+200, 
@@ -158,6 +153,7 @@ var OffGameCoinsFrame = function(resultMadeCoinsWhileOffGame, player)
 
 var SettingsFrame = function(player)
 {
+    this.frameChildren = [];
     
     this.frame = StickmanTapGame.game.add.sprite(StickmanTapGame.game.world.centerX, 
                                                 StickmanTapGame.game.world.centerY, 
@@ -173,6 +169,7 @@ var SettingsFrame = function(player)
                                                     'Player name: ', 
                                                     { font: '20px Arial', fill: '#000' });
     this.playerNameLabel.anchor.setTo(0, 0.5);
+    this.frameChildren.push(this.playerNameLabel);
 
     this.playerName = StickmanTapGame.game.add.text(marginX+120, 
                                                     StickmanTapGame.game.world.centerY-200, 
@@ -194,6 +191,7 @@ var SettingsFrame = function(player)
             localstorage.setData('playerName', newname);
         }
     }, this);
+    this.frameChildren.push(this.playerName);
 
     this.factoryResetLabel = StickmanTapGame.game.add.text(marginX, 
                                                     StickmanTapGame.game.world.centerY+150, 
@@ -209,15 +207,17 @@ var SettingsFrame = function(player)
             StickmanTapGame.game.state.start('Boot');
         }
     }, this);
+    this.frameChildren.push(this.factoryResetLabel);
 
     this.frameLabel = StickmanTapGame.game.add.text(StickmanTapGame.game.world.centerX, 
                                                     StickmanTapGame.game.world.centerY+200, 
                                                     'Click outside to continue', 
                                                     { font: '15px Arial', fill: '#000' });
     this.frameLabel.anchor.setTo(0.5, 0.5);
+    this.frameChildren.push(this.frameLabel);
 
     this.frameShown = true;
-    this.frameChildren = [this.frameLabel, this.factoryResetLabel, this.playerName, this.playerNameLabel];
+//    this.frameChildren = [this.frameLabel, this.factoryResetLabel, this.playerName, this.playerNameLabel];
     
     this.close = function()
     {

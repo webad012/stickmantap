@@ -10,13 +10,12 @@ StickmanTapGame.CheckVersion.prototype = {
     },
  
     create: function() {
-        var localstorage = new LocalStorage();
-        var api_url = localstorage.getData('apiUrl');
-        if(!api_url)
-        {
-            api_url = StickmanTapDefaultConf.apiUrl;
-            localstorage.setData('apiUrl', api_url);
-        }
+        this.blinking = this.game.add.text(this.game.world.centerX, 
+                                            100, 
+                                            "", 
+                                            { font: "20px Arial", fill: "#000"});
+        this.blinking.anchor.setTo(0.5, 0.5);
+        this.blinkingTimer = 0;
         
         this.gameVersion = StickmanTapDefaultConf.gameVersion;
         
@@ -26,36 +25,27 @@ StickmanTapGame.CheckVersion.prototype = {
                                 { font: "20px Arial", fill: "#000"});
         text1.anchor.setTo(1, 1);
         
-        this.checkVersion(api_url);
+        this.checkVersion();
     },
     
     update: function()
     {
+        this.blinkingTimer += this.game.time.elapsed; //this is in ms, not seconds.
+        if ( this.blinkingTimer >= 1000 )
+        {
+            this.blinkingTimer -= 1000;
+            this.blinking.visible = !this.blinking.visible;
+        }
     },
     
-    checkVersion: function(api_url)
+    checkVersion: function()
     {
+        this.blinking = "Checking version";
+        
         var thisGame = this;
-                
-        $.ajax({
-            url: api_url+"?action=GetCurrentVersion",
-//            data: {
-//                action: 'GetCurrentVersion',
-//                version: StickmanTapGameVersion
-//            },
-//            get_data: {
-//                action: 'GetCurrentVersion',
-//                version: StickmanTapGameVersion
-//            },
-            dataType: 'jsonp',
-            jsonp: 'callback',
-            success: function(response){
-                thisGame.onSuccess(response);
-//                
-            },
-            error: function(xhr){
-                thisGame.onFailure("1: "+xhr.responseText);
-            }
+        
+        stickmanAjax('GetCurrentVersion', function(response){
+            thisGame.onSuccess(response);
         });
     },
     
@@ -84,7 +74,7 @@ StickmanTapGame.CheckVersion.prototype = {
                     text2.anchor.setTo(0.5, 0.5);
                     var text3 = this.game.add.text(this.game.world.centerX, 
                                             200, 
-                                            response.downloadUrl, 
+                                            'Download', 
                                             { font: "20px Arial", fill: "#00F"});
                     text3.anchor.setTo(0.5, 0.5);
                     text3.inputEnabled = true;
@@ -105,26 +95,13 @@ StickmanTapGame.CheckVersion.prototype = {
                 }
                 else
                 {
-                    this.onFailure("Error getting download url");
+                    stickanAjaxFailure("Error getting download url");
                 }
             }
         }
         else
         {
-            this.onFailure(JSON.stringify(response));
-        }
-    },
-    
-    onFailure: function(reason)
-    {
-        if (window.confirm("There was problem with connection:\n"+reason+"\nDo you want to continue offline?")) 
-        {
-            StickmanTapGameOffline = true;
-            this.state.start('Preload');
-        }
-        else
-        {
-            navigator.app.exitApp();
+            stickanAjaxFailure(JSON.stringify(response));
         }
     }
 };

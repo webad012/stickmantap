@@ -1,6 +1,7 @@
 /* global Phaser */
 
 var StickmanTapGameOffline = false;
+var StickmanTapGameLoggedIn = false;
 
 var StickmanTapGame = StickmanTapGame || {};
 
@@ -12,6 +13,8 @@ StickmanTapGame.game.state.add('Boot', StickmanTapGame.Boot);
 StickmanTapGame.game.state.add('CheckVersion', StickmanTapGame.CheckVersion);
 StickmanTapGame.game.state.add('Preload', StickmanTapGame.Preload);
 StickmanTapGame.game.state.add('Splash', StickmanTapGame.Splash);
+StickmanTapGame.game.state.add('Login', StickmanTapGame.Login);
+StickmanTapGame.game.state.add('Register', StickmanTapGame.Register);
 StickmanTapGame.game.state.add('Game', StickmanTapGame.Game);
  
 StickmanTapGame.game.state.start('Boot');

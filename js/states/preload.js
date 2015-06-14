@@ -25,6 +25,7 @@ StickmanTapGame.Preload.prototype = {
     this.game.load.image('upgradebutton', 'img/upgradebutton.png');
     this.game.load.image('settings', 'img/toolsbutton.png');
     this.game.load.image('statistics', 'img/bar_chart_50x50.png');
+    this.game.load.image('penicon', 'img/pen_50x50.png');
   },
  
   create: function() {
