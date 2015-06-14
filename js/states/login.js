@@ -42,15 +42,25 @@ StickmanTapGame.Login.prototype = {
                 this.RegisterLabel.events.onInputDown.add(function(){
                     localThis.state.start('Register');
                 }, this);
+
+                this.ContinueOfflineLabel = StickmanTapGame.game.add.text(100, StickmanTapGame.game.world.centerY+50, 
+                                                                    'Continue offline', 
+                                                                    { font: '20px Arial', fill: '#000' });
+                this.ContinueOfflineLabel.anchor.setTo(0, 0.5);
+                this.ContinueOfflineLabel.inputEnabled = true;
+                this.ContinueOfflineLabel.events.onInputDown.add(function(){
+                    StickmanTapGameOffline = true;
+                    this.state.start('Game');
+                }, this);
             }
             else
             {
-                this.logIn("Login");
-                this.logOutLabel = StickmanTapGame.game.add.text(100, 
-                                                                StickmanTapGame.game.world.centerY-100, 
-                                                                'Logout', 
-                                                                { font: '20px Arial', fill: '#000' });
-                this.logOutLabel.anchor.setTo(0, 0.5);
+//                this.logIn("Login");
+//                this.logOutLabel = StickmanTapGame.game.add.text(100, 
+//                                                                StickmanTapGame.game.world.centerY-100, 
+//                                                                'Logout', 
+//                                                                { font: '20px Arial', fill: '#000' });
+//                this.logOutLabel.anchor.setTo(0, 0.5);
             }
         }
         
@@ -85,7 +95,7 @@ StickmanTapGame.Login.prototype = {
                 if(typeof response.status !== 'undefined' && response.status === 'success')
                 {
                     StickmanTapGameLoggedIn = true;
-                    this.state.start('Preload');
+                    this.state.start('Game');
                 }
             },
             error: function(xhr){
@@ -99,7 +109,7 @@ StickmanTapGame.Login.prototype = {
         if (window.confirm("There was problem with connection:\n"+reason+"\nDo you want to continue offline?")) 
         {
             StickmanTapGameOffline = true;
-            this.state.start('Preload');
+            this.state.start('Game');
         }
         else
         {

@@ -50,7 +50,7 @@ function stickanAjaxFailure(reason)
     if (window.confirm("There was problem with connection:\n"+reason+"\nDo you want to continue offline?")) 
     {
         StickmanTapGameOffline = true;
-        StickmanTapGame.game.state.start('Preload');
+        StickmanTapGame.game.state.start('Game');
     }
     else
     {
