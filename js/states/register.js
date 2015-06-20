@@ -71,7 +71,6 @@ StickmanTapGame.Register.prototype = {
         this.registerButton.anchor.setTo(0, 0.5);
         
         this.registerButton.inputEnabled = true;
-        var localThis = this;
         this.registerButton.events.onInputDown.add(function(){
             if(this.usernameField.text === ' '
                     || this.passwordField.text === ' ')
@@ -80,27 +79,32 @@ StickmanTapGame.Register.prototype = {
             }
             else
             {
+                var username = this.usernameField.text;
+                var password = this.passwordField.text;
+                
                 stickmanAjax('Register', function(response){
                     alert(response.message);
                     if(response.message === 'success')
                     {
+                        var localstorage = new LocalStorage();
+                        localstorage.setData('username', username);
+                        localstorage.setData('password', password);
+                        
                         StickmanTapGame.game.state.start('Login');
                     }
                 },
-                "username="+this.usernameField.text
-                        +"&password="+this.passwordField.text
+                "username="+username+"&password="+password
                         +"&lastaction="+Math.floor(Date.now() / 1000));
             }
         }, this);
         
         this.backButton = StickmanTapGame.game.add.text(150, 
-                                                        StickmanTapGame.game.world.centerY+100, 
-                                                        'Register', 
+                                                        StickmanTapGame.game.world.centerY+150, 
+                                                        'Back', 
                                                         { font: '20px Arial', fill: '#000' });
         this.backButton.anchor.setTo(0, 0.5);
         
         this.backButton.inputEnabled = true;
-        var localThis = this;
         this.backButton.events.onInputDown.add(function(){
         }, this);
         

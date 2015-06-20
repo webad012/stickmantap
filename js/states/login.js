@@ -157,9 +157,9 @@ StickmanTapGame.Login.prototype = {
         function(response){
             localThis.blinking.text = '';
             localThis.blinking.visible = false;
-            alert(response.message);
             if(response.message === 'success')
             {
+                localThis.blinking.text = response.message;
                 localThis.localstorage.setData('username', username);
                 localThis.localstorage.setData('password', password);
                 
@@ -170,7 +170,8 @@ StickmanTapGame.Login.prototype = {
                     var dbDate = new Date(response.user_data.last_action * 1000);
                     var gameDate = new Date(lastAction * 1000);
                     
-                    var message = 'Playing times of game and online server are not same:';
+                    var message = 'Login successfull.\n\
+                            \nPlaying times of game and online server are not same:';
                     message += '\n - local time:\t'+gameDate.toGMTString();
                     message += '\n - server time:\t'+dbDate.toGMTString();
                     message += '\n\n Would you like to load server data?';
@@ -218,6 +219,7 @@ StickmanTapGame.Login.prototype = {
             }
             else
             {
+                alert(response.message);
                 localThis.localstorage.setData('username', '');
                 localThis.localstorage.setData('password', '');
                 localThis.state.start('Login');
