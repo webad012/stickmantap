@@ -25,7 +25,7 @@ var InfiniteFormulas = {
     {
 //        return gameLevelNum * 2;
 //        return (gameLevelNum ^ 10) * (gameLevelNum ^ 20);
-        var monsterGoldDrop = Math.pow(gameLevelNum, 2);
+        var monsterGoldDrop = Math.floor(Math.pow(gameLevelNum, 2.5));
         return monsterGoldDrop;
     },
     getMonsterMaxHealth: function(gameLevelNum)
