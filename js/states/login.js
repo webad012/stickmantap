@@ -177,7 +177,9 @@ StickmanTapGame.Login.prototype = {
                     }
                     else
                     {
-                        if(typeof lastPlayingUsername !== 'undefined')
+                        if(typeof lastPlayingUsername !== 'undefined' 
+                                && lastPlayingUsername.length !== null
+                                && lastPlayingUsername.length > 0)
                         {
                             localThis.localstorage.setData('gameLevel', response.user_data.character_game_level);
                             localThis.localstorage.setData('playerCoins', response.user_data.character_coins);

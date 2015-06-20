@@ -180,7 +180,7 @@ StickmanTapGame.Game.prototype = {
         }
         else
         {
-            this.localStorage.setData('lastPlayingUsername', null);
+            this.localStorage.setData('lastPlayingUsername', '');
         }
         
         this.lastAction = this.localStorage.getData('lastAction');
