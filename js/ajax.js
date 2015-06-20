@@ -1,20 +1,20 @@
 /* global StickmanTapGame, StickmanTapDefaultConf */
 
-function stickmanAjax(action, success_function, parameters)
-{
-    var localstorage = new LocalStorage();
-    
-    var api_url = localstorage.getData('apiUrl');
-    if(!api_url)
-    {
-        api_url = StickmanTapDefaultConf.apiUrl;
-        localstorage.setData('apiUrl', api_url);
-    }
+function stickmanAjax(action, success_function, parameters, error_function)
+{    
+    var api_url = StickmanTapDefaultConf.apiUrl;
     
     api_url += "?action="+action;
     if(typeof parameters !== "undefined" && parameters !== "")
     {
         api_url += "&"+parameters;
+    }
+    
+    if(typeof error_function === 'undefined')
+    {
+        error_function = function(responseText){
+            stickanAjaxFailure(responseText);
+        };
     }
         
     $.ajax({
@@ -39,7 +39,7 @@ function stickmanAjax(action, success_function, parameters)
             }
         },
         error: function(xhr){
-            stickanAjaxFailure(xhr.responseText);
+            error_function(xhr.responseText);
         }
     });
 }

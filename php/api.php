@@ -8,7 +8,7 @@ include('mysqldb.php');
 
 $action = filter_input(INPUT_GET, 'action');
 $callback = filter_input(INPUT_GET, 'callback');
-$data = '{}';
+$data = array();
 
 header('Content-Type: text/javascript; charset=utf8');
 header('Access-Control-Allow-Origin: http://www.milosjankovic.com/');
@@ -24,25 +24,68 @@ if(isset($callback))
         $current_version = getCurrentVersionNum($db);
         $download_url = getDownloadUrl($db);
 
-        $data = '{"status":"success","gameVersion":'.$current_version.',"downloadUrl":"'.$download_url.'"}';
+        $data['status'] = 'success';
+        $data['gameVersion'] = $current_version;
+        $data['downloadUrl'] = $download_url;
+        $data = json_encode($data);
         echo $callback.'('.$data.');';
     }
     else if($action == 'Register')
     {
         $username = filter_input(INPUT_GET, 'username');
-        $password = filter_input(INPUT_GET, 'password');
+        $password = md5(filter_input(INPUT_GET, 'password'));
         $lastaction = filter_input(INPUT_GET, 'lastaction');
-        
-        $password = md5($password);
         
         $message = registerUser($db, $username, $password, $lastaction);
         
-        $data = '{"status":"success","message":"'.$message.'"}';
+        $data['status'] = 'success';
+        $data['message'] = $message;
+        $data = json_encode($data);
+        echo $callback.'('.$data.');';
+    }
+    else if($action == 'Login')
+    {
+        $username = filter_input(INPUT_GET, 'username');
+        $password = md5(filter_input(INPUT_GET, 'password'));
+        
+        $message = loginUser($db, $username, $password);
+        $user_data = '';
+        if($message === 'success')
+        {
+            $user_data = getUserData($db, $username);
+        }
+        
+        $data['status'] = 'success';
+        $data['message'] = $message;
+        $data['user_data'] = $user_data;
+        $data = json_encode($data);
+        
+        echo $callback.'('.$data.');';
+    }
+    else if($action == 'SetData')
+    {
+        $username = filter_input(INPUT_GET, 'username');
+        $gameLevel = filter_input(INPUT_GET, 'gameLevel');
+        $playerCoins = filter_input(INPUT_GET, 'playerCoins');
+        $playerLevel = filter_input(INPUT_GET, 'playerLevel');
+        $maxGameLevel = filter_input(INPUT_GET, 'maxGameLevel');
+        $playerName = filter_input(INPUT_GET, 'playerName');
+        $lastAction = filter_input(INPUT_GET, 'lastAction');
+        
+        $message = setData($db, $username, $gameLevel, $playerCoins, 
+                $playerLevel, $maxGameLevel, $playerName, $lastAction);
+        
+        $data['status'] = 'success';
+        $data['message'] = $message;
+        $data = json_encode($data);
+        
         echo $callback.'('.$data.');';
     }
     else
     {
-        $data = '{"status":"failure","message":"bad action2"}';
+        $data['status'] = 'failure';
+        $data['message'] = "bad action2";
+        $data = json_encode($data);
         echo $callback.'('.$data.');';
     }
     
@@ -50,6 +93,8 @@ if(isset($callback))
 }
 else
 {
-    $data = '{"status":"failure","message":"bad action1"}';
+    $data['status'] = 'failure';
+    $data['message'] = "bad action1";
+    $data = json_encode($data);
     echo $data;
 }

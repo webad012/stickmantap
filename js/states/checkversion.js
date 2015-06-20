@@ -53,7 +53,7 @@ StickmanTapGame.CheckVersion.prototype = {
     {
         if(typeof response.gameVersion !== 'undefined')
         {
-            if(response.gameVersion === this.gameVersion)
+            if(parseFloat(response.gameVersion) === this.gameVersion)
             {
                 this.state.start('Preload');
             }

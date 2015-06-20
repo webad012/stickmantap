@@ -57,6 +57,11 @@ StickmanTapGame.Game.prototype = {
         this.wasRevertedInLevel = false;
         this.damagesInLastSecond = [];
         this.dpsCheckTimer = 0;
+        this.backupToServerTimer = 0;
+        this.monsterAttackTimer = 0;
+        this.monsterCanAttack = false;
+        this.playerAttackTimer = 0;
+        this.playerCanAttack = false;
         this.currentDPS = 0;
         
         this.damage_text_position = {coord_x: this.game.world.centerX-100, coord_y: this.game.world.centerY};
@@ -106,7 +111,7 @@ StickmanTapGame.Game.prototype = {
     update: function()
     {
         this.dpsCheckTimer += this.game.time.elapsed;
-        if ( this.dpsCheckTimer >= 500 )
+        if ( this.dpsCheckTimer >= 500 ) // 0.5s
         {
             this.dpsCheckTimer = 0;
             var dps_sum = 0;
@@ -125,6 +130,63 @@ StickmanTapGame.Game.prototype = {
             this.currentDPS = dps_sum;
             
             this.refreshTexts();
+        }
+        
+        if(StickmanTapGameOffline === false)
+        {
+            this.backupToServerTimer += this.game.time.elapsed;
+            if ( this.backupToServerTimer >= (1000 * 60) ) // 1min
+            {
+                var curDate = new Date();
+                console.log(curDate.toGMTString()+' - backup atempt');
+                this.backupToServerTimer = 0;
+                
+                var username = this.localStorage.getData('username');
+                var gameLevel = this.localStorage.getData('gameLevel');
+                var playerCoins = this.localStorage.getData('playerCoins');
+                var playerLevel = this.localStorage.getData('playerLevel');
+                var maxGameLevel = this.localStorage.getData('maxGameLevel');
+                var playerName = this.localStorage.getData('playerName');
+                var lastAction = this.localStorage.getData('lastAction');
+                
+                var parameters = "username="+username
+                        +"&gameLevel="+gameLevel
+                        +"&playerCoins="+playerCoins
+                        +"&playerLevel="+playerLevel
+                        +"&maxGameLevel="+maxGameLevel
+                        +"&playerName="+playerName
+                        +"&lastAction="+lastAction;
+                stickmanAjax('SetData',
+                function(response){
+                    console.log('backup success');
+                },
+                parameters,
+                function(responseText){
+                    StickmanTapGameOffline = true;
+                    var message = 'There was problem with network, you will continue to play offline';
+                    alert(message);
+                });
+            }
+        }
+        
+        if(this.playerCanAttack === true)
+        {
+            this.playerAttackTimer += this.game.time.elapsed;
+            if ( this.playerAttackTimer >= 1000 ) // 1s
+            {
+                this.playerAttackTimer = 0;
+                this.playerAttack();
+            }
+        }
+        
+        if(this.monsterCanAttack === true)
+        {
+            this.monsterAttackTimer += this.game.time.elapsed;
+            if ( this.monsterAttackTimer >= 1000 ) // 1s
+            {
+                this.monsterAttackTimer = 0;
+                this.monsterAttack();
+            }
         }
     },
     
@@ -234,6 +296,8 @@ StickmanTapGame.Game.prototype = {
 
             if(this.monster.health <= 0)
             {
+                this.monsterCanAttack = false;
+                this.playerCanAttack = false;
                 this.monsterDied();
             }
         }
@@ -285,9 +349,10 @@ StickmanTapGame.Game.prototype = {
     
     loadLevel: function(gameLevel)
     {
+        this.monsterCanAttack = false;
+        this.playerCanAttack = false;
         this.inAnimation = false;
         this.gameLevel = gameLevel;
-//        this.player.sprite.alpha = 0;
         
         if(typeof this.monster !== 'undefined')
         {
@@ -313,27 +378,15 @@ StickmanTapGame.Game.prototype = {
         this.monsterGroup.add(this.monster.sprite);
         if(gameLevel%5 === 0)
         {
-            this.monster.attackLooper = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.monsterAttack, this);
-            this.monster.attackLooper.timer.start();
+            this.monsterCanAttack = true;
         }
         
-        if(typeof this.player.attackLooper === 'undefined')
-        {
-            this.player.attackLooper = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.playerAttack, this);
-            this.player.attackLooper.timer.start();
-        }
-        
-//        if(this.gameLevel > this.maxGameLevel)
-//        {
-//            this.newMaxGameLevel();
-//        }
+        this.playerCanAttack = true;
         
         if(this.wasRevertedInLevel)
         {
             this.next_enemy_text.inputEnabled = true;
         }
-
-//        this.refreshTexts();
     },
     
     monsterAttack: function()
@@ -349,14 +402,11 @@ StickmanTapGame.Game.prototype = {
                                 this.player.sprite.y-200,
                                 monsterDamage,
                                 { font: "20px Arial", fill: "#000"});
-//            this.refreshTexts();
 
             if(this.player.health <= 0)
             {
-                if(typeof this.monster.attackLooper !== 'undefined')
-                {
-                    this.monster.attackLooper.timer.stop();
-                }
+                this.monsterCanAttack = false;
+                this.playerCanAttack = false;
                 this.playerDied();
             }
         }

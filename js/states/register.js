@@ -9,9 +9,7 @@ StickmanTapGame.Register.prototype = {
     preload: function() {
     },
  
-    create: function() {
-        this.localstorage = new LocalStorage();
-        
+    create: function() {        
         this.usernameLabel = StickmanTapGame.game.add.text(50, 
                                                         StickmanTapGame.game.world.centerY-150, 
                                                         'Username:', 
@@ -83,7 +81,11 @@ StickmanTapGame.Register.prototype = {
             else
             {
                 stickmanAjax('Register', function(response){
-                    localThis.onRegisterSuccess(response);
+                    alert(response.message);
+                    if(response.message === 'success')
+                    {
+                        StickmanTapGame.game.state.start('Login');
+                    }
                 },
                 "username="+this.usernameField.text
                         +"&password="+this.passwordField.text
@@ -91,19 +93,16 @@ StickmanTapGame.Register.prototype = {
             }
         }, this);
         
-    },
-    
-    update: function()
-    {
+        this.backButton = StickmanTapGame.game.add.text(150, 
+                                                        StickmanTapGame.game.world.centerY+100, 
+                                                        'Register', 
+                                                        { font: '20px Arial', fill: '#000' });
+        this.backButton.anchor.setTo(0, 0.5);
         
-    },
-    
-    onRegisterSuccess: function(response)
-    {
-        alert(response.message);
-        if(response.message === 'success')
-        {
-            StickmanTapGame.game.state.start('Game');
-        }
+        this.backButton.inputEnabled = true;
+        var localThis = this;
+        this.backButton.events.onInputDown.add(function(){
+        }, this);
+        
     }
 };

@@ -1,9 +1,7 @@
 <?php
 
 function connectDb($params)
-{
-    error_log(__METHOD__.' - 1');
-    
+{    
     $mysql_host = $params['dbhost'];
     $mysql_user = $params['dbusername'];
     $mysql_password = $params['dbpassword'];
@@ -59,7 +57,6 @@ function registerUser($db, $username, $password, $lastaction)
                                             . "max_game_level, last_action, api_url, character_game_level) "
             . "VALUES (:username, :password, :character_name, :character_level, :character_coins, "
                     . ":max_game_level, :last_action, :api_url, :character_game_level)";
-//                    . ":max_game_level, :last_action, :api_url)";
     $query2 = $db->prepare($sql2);
     $query2->execute(array(
         ':username'=>$username,
@@ -74,4 +71,72 @@ function registerUser($db, $username, $password, $lastaction)
     ));
     
     return 'success';
+}
+
+function loginUser($db, $username, $password)
+{
+    $result = 'Unknown error';
+    $sql1 = "SELECT count(*) as cnt from stickmantap_users WHERE username=:username AND password=:password";
+    $query1 = $db->prepare($sql1);
+    $query1->execute(array(
+        ':username'=>$username,
+        ':password'=>$password
+    ));
+    $row = $query1->fetch(PDO::FETCH_ASSOC);
+        
+    $count = $row['cnt'];
+    if($count != 1)
+    {
+        $result = 'Wrong username and or password';
+    }
+    else
+    {
+        $result = 'success';
+    }
+        
+    return $result;
+}
+
+function getUserData($db, $username)
+{ 
+    $sql1 = "SELECT username, character_name, character_level, character_coins, max_game_level, "
+                . "last_action, api_url, character_game_level "
+            . "FROM stickmantap_users "
+            . "WHERE username=:username";
+    $query1 = $db->prepare($sql1);
+    $query1->execute(array(
+        ':username'=>$username,
+    ));
+    $row = $query1->fetch(PDO::FETCH_ASSOC);
+    
+    $result = $row;
+        
+    return $result;
+}
+
+function setData($db, $username, $gameLevel, $playerCoins, 
+                    $playerLevel, $maxGameLevel, $playerName, $lastAction)
+{
+    $result = 'success';
+    
+    $sql = "UPDATE stickmantap_users "
+            . "SET character_game_level = :character_game_level, "
+            . "character_coins = :character_coins, "
+            . "character_level = :character_level, "
+            . "max_game_level = :max_game_level, "
+            . "character_name = :character_name, "
+            . "last_action = :last_action "
+            . "WHERE username = :username";
+    $query = $db->prepare($sql);
+    $query->execute(array(
+        ':username'=>$username,
+        ':character_game_level'=>$gameLevel,
+        ':character_coins'=>$playerCoins,
+        ':character_level'=>$playerLevel,
+        ':max_game_level'=>$maxGameLevel,
+        ':character_name'=>$playerName,
+        ':last_action'=>$lastAction
+    ));
+    
+    return $result;
 }

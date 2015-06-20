@@ -16,4 +16,4 @@ var LocalStorage = function () {
     {
         localStorage.clear();
     };
-}
+};

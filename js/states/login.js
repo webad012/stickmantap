@@ -12,7 +12,12 @@ StickmanTapGame.Login.prototype = {
     create: function() {
         var localThis = this;
         
-        this.localstorage = new LocalStorage();
+        this.blinking = this.game.add.text(this.game.world.centerX, 
+                                            100, 
+                                            "", 
+                                            { font: "20px Arial", fill: "#000"});
+        this.blinking.anchor.setTo(0.5, 0.5);
+        this.blinkingTimer = 0;
         
         if(StickmanTapGameOffline === true)
         {
@@ -20,21 +25,86 @@ StickmanTapGame.Login.prototype = {
         }
         else
         {
+            this.localstorage = new LocalStorage();
+            
             var username = this.localstorage.getData('username');
             var password = this.localstorage.getData('password');
-            if(!username || !password)
+            if( (username === null || username.length === 0) || (password === null || password.length === 0) )
             {
-                this.logInLabel = StickmanTapGame.game.add.text(100, 
-                                                                StickmanTapGame.game.world.centerY-100, 
-                                                                'Login', 
+                this.usernameLabel = StickmanTapGame.game.add.text(50, 
+                                                        StickmanTapGame.game.world.centerY-150, 
+                                                        'Username:', 
+                                                        { font: '20px Arial', fill: '#000' });
+                this.usernameLabel.anchor.setTo(0, 0.5);
+                this.usernameField = StickmanTapGame.game.add.text(150, 
+                                                                StickmanTapGame.game.world.centerY-150, 
+                                                                '', 
                                                                 { font: '20px Arial', fill: '#000' });
-                this.logInLabel.anchor.setTo(0, 0.5);
-                this.logInLabel.inputEnabled = true;
-                this.logInLabel.events.onInputDown.add(function(){
-                    
+                this.usernameField.anchor.setTo(0, 0.5);
+                this.usernamePen = this.game.add.sprite(150+this.usernameField.width, 
+                                                        this.game.world.centerY-150, 
+                                                        'penicon');
+                this.usernamePen.anchor.setTo(0, 0.5);
+                this.usernamePen.inputEnabled = true;
+                this.usernamePen.events.onInputDown.add(function(){
+                    var username = prompt("Please enter username");
+                    while(username !== null && (username.length > 10 || username.length === 0)){
+                        alert("Keep the name length to 10 chars or less");
+                        username = prompt("Please enter username", username);
+                    }
+                    if (username !== null) {
+                        this.usernameField.text = username;
+                        this.usernamePen.position.x = 150+this.usernameField.width;
+                    }
                 }, this);
 
-                this.RegisterLabel = StickmanTapGame.game.add.text(100, StickmanTapGame.game.world.centerY-50, 
+                this.passwordLabel = StickmanTapGame.game.add.text(50, 
+                                                                StickmanTapGame.game.world.centerY-50, 
+                                                                'Password:', 
+                                                                { font: '20px Arial', fill: '#000' });
+                this.passwordLabel.anchor.setTo(0, 0.5);
+                this.passwordField = StickmanTapGame.game.add.text(150, 
+                                                                StickmanTapGame.game.world.centerY-50, 
+                                                                '', 
+                                                                { font: '20px Arial', fill: '#000' });
+                this.passwordField.anchor.setTo(0, 0.5);
+                this.passwordPen = this.game.add.sprite(150+this.usernameField.width, 
+                                                        this.game.world.centerY-50, 
+                                                        'penicon');
+                this.passwordPen.anchor.setTo(0, 0.5);
+                this.passwordPen.inputEnabled = true;
+                this.passwordPen.events.onInputDown.add(function(){
+                    var password = prompt("Please enter username");
+                    while(password !== null && (password.length > 10 || password.length === 0)){
+                        alert("Keep the name length to 10 chars or less");
+                        password = prompt("Please enter username", password);
+                    }
+                    if (password !== null) {
+                        this.passwordField.text = password;
+                        this.passwordPen.position.x = 150+this.passwordField.width;
+                    }
+                }, this);
+
+                this.loginButton = StickmanTapGame.game.add.text(150, 
+                                                                StickmanTapGame.game.world.centerY+50, 
+                                                                'Login', 
+                                                                { font: '20px Arial', fill: '#000' });
+                this.loginButton.anchor.setTo(0, 0.5);
+
+                this.loginButton.inputEnabled = true;
+                this.loginButton.events.onInputDown.add(function(){
+                    if(this.usernameField.text === ' '
+                            || this.passwordField.text === ' ')
+                    {
+                        alert("Username and/or password not entered");
+                    }
+                    else
+                    {
+                        localThis.logIn(this.usernameField.text, this.passwordField.text);
+                    }
+                }, this);
+
+                this.RegisterLabel = StickmanTapGame.game.add.text(100, StickmanTapGame.game.world.centerY+150, 
                                                                     'Register', 
                                                                     { font: '20px Arial', fill: '#000' });
                 this.RegisterLabel.anchor.setTo(0, 0.5);
@@ -43,7 +113,7 @@ StickmanTapGame.Login.prototype = {
                     localThis.state.start('Register');
                 }, this);
 
-                this.ContinueOfflineLabel = StickmanTapGame.game.add.text(100, StickmanTapGame.game.world.centerY+50, 
+                this.ContinueOfflineLabel = StickmanTapGame.game.add.text(100, StickmanTapGame.game.world.centerY+200, 
                                                                     'Continue offline', 
                                                                     { font: '20px Arial', fill: '#000' });
                 this.ContinueOfflineLabel.anchor.setTo(0, 0.5);
@@ -55,12 +125,7 @@ StickmanTapGame.Login.prototype = {
             }
             else
             {
-//                this.logIn("Login");
-//                this.logOutLabel = StickmanTapGame.game.add.text(100, 
-//                                                                StickmanTapGame.game.world.centerY-100, 
-//                                                                'Logout', 
-//                                                                { font: '20px Arial', fill: '#000' });
-//                this.logOutLabel.anchor.setTo(0, 0.5);
+                this.logIn(username, password);
             }
         }
         
@@ -68,52 +133,102 @@ StickmanTapGame.Login.prototype = {
     
     update: function()
     {
-        
-    },
-    
-    logInLogoutRegister: function(action)
-    {
-        if(action !== "Login"
-                || action !== "Logout"
-                || action !== "Register")
+        if(this.blinking.text !== ' ')
         {
-            alert("Wrong action");
-            navigator.app.exitApp();
-        }
-        
-        var api_url = this.localstorage.getData('apiUrl');
-        var username = this.localstorage.getData('username');
-        var password = this.localstorage.getData('password');
-        
-        var thisGame = this;
-
-        $.ajax({
-            url: api_url+"?action="+action+"&username="+username+"&password="+password,
-            dataType: 'jsonp',
-            jsonp: 'callback',
-            success: function(response){
-                if(typeof response.status !== 'undefined' && response.status === 'success')
-                {
-                    StickmanTapGameLoggedIn = true;
-                    this.state.start('Game');
-                }
-            },
-            error: function(xhr){
-                thisGame.onFailure("1: "+xhr.responseText);
+            this.blinkingTimer += this.game.time.elapsed; //this is in ms, not seconds.
+            if ( this.blinkingTimer >= 1000 )
+            {
+                this.blinkingTimer -= 1000;
+                this.blinking.visible = !this.blinking.visible;
             }
-        });
+        }
     },
     
-    onFailure: function(reason)
+    logIn: function(username, password)
     {
-        if (window.confirm("There was problem with connection:\n"+reason+"\nDo you want to continue offline?")) 
-        {
-            StickmanTapGameOffline = true;
-            this.state.start('Game');
-        }
-        else
-        {
-            navigator.app.exitApp();
-        }
+        var localThis = this;
+        
+        this.blinking.text = 'Loging in';
+        this.blinking.visible = true;
+        
+        var parameters = "username="+username+"&password="+password;
+        
+        stickmanAjax('Login', 
+        function(response){
+            localThis.blinking.text = '';
+            localThis.blinking.visible = false;
+            alert(response.message);
+            if(response.message === 'success')
+            {
+                localThis.localstorage.setData('username', username);
+                localThis.localstorage.setData('password', password);
+                
+                var lastAction = localThis.localstorage.getData('lastAction');
+                
+                if(response.user_data.last_action !== lastAction)
+                {
+                    var dbDate = new Date(response.user_data.last_action * 1000);
+                    var gameDate = new Date(lastAction * 1000);
+                    
+                    var message = 'Playing times of game and online server are not same:';
+                    message += '\n - local time:\t'+gameDate.toGMTString();
+                    message += '\n - server time:\t'+dbDate.toGMTString();
+                    message += '\n\n Would you like to load server data?';
+                    message += '\n (yes: server data; no: local data)';
+                    if (window.confirm(message)) 
+                    {
+                        localThis.localstorage.setData('gameLevel', response.user_data.character_game_level);
+                        localThis.localstorage.setData('playerCoins', response.user_data.character_coins);
+                        localThis.localstorage.setData('playerLevel', response.user_data.character_level);
+                        localThis.localstorage.setData('maxGameLevel', response.user_data.max_game_level);
+                        localThis.localstorage.setData('playerName', response.user_data.character_name);
+                    }
+                    else
+                    {
+                        var gameLevel = localThis.localstorage.getData('gameLevel');
+                        var playerCoins = localThis.localstorage.getData('playerCoins');
+                        var playerLevel = localThis.localstorage.getData('playerLevel');
+                        var maxGameLevel = localThis.localstorage.getData('maxGameLevel');
+                        var playerName = localThis.localstorage.getData('playerName');
+                        var lastAction = localThis.localstorage.getData('lastAction');
+
+                        var parameters = "username="+username
+                                +"&gameLevel="+gameLevel
+                                +"&playerCoins="+playerCoins
+                                +"&playerLevel="+playerLevel
+                                +"&maxGameLevel="+maxGameLevel
+                                +"&playerName="+playerName
+                                +"&lastAction="+lastAction;
+                        stickmanAjax('SetData',
+                        function(response){console.log('backup success');},
+                        parameters,
+                        function(responseText){
+                            StickmanTapGameOffline = true;
+                            var message = 'There was problem with network, you will continue to play offline';
+                            alert(message);
+                        });
+                    }
+                }
+                else
+                {
+//                    console.log('same');
+                }
+                
+                localThis.state.start('Game');
+            }
+            else
+            {
+                localThis.localstorage.setData('username', '');
+                localThis.localstorage.setData('password', '');
+                localThis.state.start('Login');
+            }
+        },
+        parameters,
+        function(responseText){
+//            console.log('login error');
+            localThis.blinking.text = '';
+            localThis.blinking.visible = false;
+            alert(responseText);
+        });
     }
 };

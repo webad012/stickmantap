@@ -83,37 +83,6 @@ var ProfileFrame = function(player)
             }
         }
     };
-    
-//    $.ajax({
-//        type: "POST",
-//        url: "index.php?r=api/getTeams",
-//        dataType: 'json',
-//        async: true,
-//        success: function(response){
-//            if(response.status === "success")
-//            {
-//                var select_team = parentDiv.find('.select-team');
-//                                                
-//                if(response.message !== undefined)
-//                {
-//                    var json_result = jQuery.parseJSON(response.message);
-//                    for(var i=0; i<json_result.length; i++)
-//                    {
-//                        select_team.append($("<option></option>")
-//                                    .attr("value",json_result[i].id)
-//                                    .text(json_result[i].name)); 
-//                    }
-//                }
-//            }
-//            else
-//            {
-//                alert("failure: "+response.message);
-//            }
-//        },
-//        error: function(xhr){
-//            alert("failure: "+xhr.responseText+ " - " + this.url);
-//        }
-//    });
 };
 
 var OffGameCoinsFrame = function(resultMadeCoinsWhileOffGame, player)
@@ -192,6 +161,45 @@ var SettingsFrame = function(player)
         }
     }, this);
     this.frameChildren.push(this.playerName);
+    
+    
+    //
+    if(StickmanTapGameOffline === false)
+    {
+        this.loggedInLabel = StickmanTapGame.game.add.text(marginX, 
+                                                        StickmanTapGame.game.world.centerY-150, 
+                                                        'Logged in: ', 
+                                                        { font: '20px Arial', fill: '#000' });
+        this.loggedInLabel.anchor.setTo(0, 0.5);
+        this.frameChildren.push(this.loggedInLabel);
+
+        var localstorage = new LocalStorage();
+        var username = localstorage.getData('username');
+        this.userName = StickmanTapGame.game.add.text(marginX+100, 
+                                                        StickmanTapGame.game.world.centerY-150, 
+                                                        username, 
+                                                        { font: '20px Arial', fill: '#000' });
+        this.userName.anchor.setTo(0, 0.5);
+        
+        this.loggedOutLabel = StickmanTapGame.game.add.text(marginX+100+this.userName.width, 
+                                                        StickmanTapGame.game.world.centerY-150, 
+                                                        '(logout)', 
+                                                        { font: '20px Arial', fill: '#000' });
+        this.loggedOutLabel.anchor.setTo(0, 0.5);
+        this.frameChildren.push(this.loggedOutLabel);
+        this.loggedOutLabel.inputEnabled = true;
+        this.loggedOutLabel.events.onInputDown.add(function(){
+            if (window.confirm("Are you sure you want to logout?")) 
+            {
+                var localstorage = new LocalStorage();
+                localstorage.setData('username', '');
+                localstorage.setData('password', '');
+                StickmanTapGame.game.state.start('Login');
+            }
+        }, this);
+        this.frameChildren.push(this.userName);
+    }
+    //
 
     this.factoryResetLabel = StickmanTapGame.game.add.text(marginX, 
                                                     StickmanTapGame.game.world.centerY+150, 
@@ -217,7 +225,6 @@ var SettingsFrame = function(player)
     this.frameChildren.push(this.frameLabel);
 
     this.frameShown = true;
-//    this.frameChildren = [this.frameLabel, this.factoryResetLabel, this.playerName, this.playerNameLabel];
     
     this.close = function()
     {

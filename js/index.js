@@ -1,7 +1,6 @@
 /* global Phaser */
 
 var StickmanTapGameOffline = false;
-var StickmanTapGameLoggedIn = false;
 
 var StickmanTapGame = StickmanTapGame || {};
 
