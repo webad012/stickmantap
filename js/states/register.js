@@ -53,10 +53,10 @@ StickmanTapGame.Register.prototype = {
         this.passwordPen.anchor.setTo(0, 0.5);
         this.passwordPen.inputEnabled = true;
         this.passwordPen.events.onInputDown.add(function(){
-            var password = prompt("Please enter username");
-            while(password !== null && (password.length > 10 || password.length === 0)){
-                alert("Keep the name length to 10 chars or less");
-                password = prompt("Please enter username", password);
+            var password = prompt("Please enter password");
+            while(password !== null && (password.length > 20 || password.length === 0)){
+                alert("Keep the name length to 20 chars or less");
+                password = prompt("Please enter password", password);
             }
             if (password !== null) {
                 this.passwordField.text = password;
