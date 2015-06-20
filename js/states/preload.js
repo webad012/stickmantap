@@ -17,8 +17,6 @@ StickmanTapGame.Preload.prototype = {
     this.load.spritesheet('player', 'img/DudeFull.png', 127, 127, -1, 1, 1);
     this.load.spritesheet('monster', 'img/ghostSheet (copy).PNG', 172, 172, -1, 1, 1);
     this.load.spritesheet('tapmark', 'img/explosion01_sprite_sheet.png', 210, 120, -1, 5, 5);
-//    this.game.load.image('background', 'img/background2.png');
-    this.game.load.image('background', 'img/background3.png');
     this.game.load.image('logo', 'img/stickmanicon.png');
     this.game.load.image('profilebutton', 'img/profilebutton.png');
     this.game.load.image('frame', 'img/frame.png');
@@ -26,6 +24,10 @@ StickmanTapGame.Preload.prototype = {
     this.game.load.image('settings', 'img/toolsbutton.png');
     this.game.load.image('statistics', 'img/bar_chart_50x50.png');
     this.game.load.image('penicon', 'img/pen_50x50.png');
+    
+    this.game.load.image('background1', 'img/background3.png');
+    this.game.load.image('background2', 'img/background4.png');
+    this.game.load.image('background3', 'img/background5.png');
   },
  
   create: function() {

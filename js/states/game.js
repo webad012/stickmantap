@@ -20,7 +20,9 @@ StickmanTapGame.Game.prototype = {
     create: function() 
     {
         this.backgrounds = [
-            'background'
+            'background1',
+            'background2',
+            'background3'
         ];
         this.monster_spritesheets = [
             {
@@ -63,6 +65,9 @@ StickmanTapGame.Game.prototype = {
         this.playerAttackTimer = 0;
         this.playerCanAttack = false;
         this.currentDPS = 0;
+        
+        this.currentBackgroundSpriteIndex = -1;
+        this.currentMonsterSpriteIndex = -1;
         
         this.damage_text_position = {coord_x: this.game.world.centerX-100, coord_y: this.game.world.centerY};
         this.damage_text_style = { font: "20px Arial", fill: "#000"};
@@ -352,7 +357,7 @@ StickmanTapGame.Game.prototype = {
         
         this.player.health = this.player.getMaxHealth();
         
-        var background_index = Math.floor((Math.random() * this.backgrounds.length));
+        var background_index = this.nextLevelBackgroundIndex();
         var monster_spritesheet_index = Math.floor((Math.random() * this.monster_spritesheets.length));
         
         this.background = this.game.add.sprite(0,0, this.backgrounds[background_index]);
@@ -556,6 +561,22 @@ StickmanTapGame.Game.prototype = {
         }
         
         return monsterLevel;
+    },
+    
+    nextLevelBackgroundIndex: function()
+    {        
+        var background_index = Math.floor((Math.random() * this.backgrounds.length));
+        
+        for(var i=0; i<5; i++)
+        {
+            if(background_index !== this.currentBackgroundSpriteIndex)
+            {
+                this.currentBackgroundSpriteIndex = background_index;
+                break;
+            }            
+        }
+        
+        return background_index;
     }
 };
 
