@@ -173,6 +173,10 @@ StickmanTapGame.Game.prototype = {
             var username = this.localStorage.getData('username');
             this.localStorage.setData('lastPlayingUsername', username);
         }
+        else
+        {
+            this.localStorage.setData('lastPlayingUsername', null);
+        }
         
         this.lastAction = this.localStorage.getData('lastAction');
         
