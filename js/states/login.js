@@ -167,47 +167,48 @@ StickmanTapGame.Login.prototype = {
                 
                 if(response.user_data.last_action !== lastAction)
                 {
-                    var dbDate = new Date(response.user_data.last_action * 1000);
-                    var gameDate = new Date(lastAction * 1000);
-                    
-                    var message = 'Login successfull.\n\
-                            \nPlaying times of game and online server are not same:';
-                    message += '\n - local time:\t'+gameDate.toGMTString();
-                    message += '\n - server time:\t'+dbDate.toGMTString();
-                    message += '\n\n Would you like to load server data?';
-                    message += '\n (yes: server data; no: local data)';
-                    if (window.confirm(message)) 
+                    var lastPlayingUsername = localThis.localstorage.getData('lastPlayingUsername');
+                    if(lastPlayingUsername === username)
                     {
-                        localThis.localstorage.setData('gameLevel', response.user_data.character_game_level);
-                        localThis.localstorage.setData('playerCoins', response.user_data.character_coins);
-                        localThis.localstorage.setData('playerLevel', response.user_data.character_level);
-                        localThis.localstorage.setData('maxGameLevel', response.user_data.max_game_level);
-                        localThis.localstorage.setData('playerName', response.user_data.character_name);
+                        if(response.user_data.last_action < lastAction)
+                        {
+                            localThis.localstorage.onlineBackup();
+                        }
                     }
                     else
                     {
-                        var gameLevel = localThis.localstorage.getData('gameLevel');
-                        var playerCoins = localThis.localstorage.getData('playerCoins');
-                        var playerLevel = localThis.localstorage.getData('playerLevel');
-                        var maxGameLevel = localThis.localstorage.getData('maxGameLevel');
-                        var playerName = localThis.localstorage.getData('playerName');
-                        var lastAction = localThis.localstorage.getData('lastAction');
+                        if(typeof lastPlayingUsername !== 'undefined')
+                        {
+                            localThis.localstorage.setData('gameLevel', response.user_data.character_game_level);
+                            localThis.localstorage.setData('playerCoins', response.user_data.character_coins);
+                            localThis.localstorage.setData('playerLevel', response.user_data.character_level);
+                            localThis.localstorage.setData('maxGameLevel', response.user_data.max_game_level);
+                            localThis.localstorage.setData('playerName', response.user_data.character_name);
+                        }
+                        else
+                        {
+                            var dbDate = new Date(response.user_data.last_action * 1000);
+                            var gameDate = new Date(lastAction * 1000);
 
-                        var parameters = "username="+username
-                                +"&gameLevel="+gameLevel
-                                +"&playerCoins="+playerCoins
-                                +"&playerLevel="+playerLevel
-                                +"&maxGameLevel="+maxGameLevel
-                                +"&playerName="+playerName
-                                +"&lastAction="+lastAction;
-                        stickmanAjax('SetData',
-                        function(response){console.log('backup success');},
-                        parameters,
-                        function(responseText){
-                            StickmanTapGameOffline = true;
-                            var message = 'There was problem with network, you will continue to play offline';
-                            alert(message);
-                        });
+                            var message = 'Login successfull.\n\
+                                    \nThere is game data on this device:';
+                            message += '\n - local time:\t'+gameDate.toGMTString();
+                            message += '\n - server time:\t'+dbDate.toGMTString();
+                            message += '\n\n Would you like to load server data?';
+                            message += '\n (yes: server data; no: local data)';
+                            if (window.confirm(message)) 
+                            {
+                                localThis.localstorage.setData('gameLevel', response.user_data.character_game_level);
+                                localThis.localstorage.setData('playerCoins', response.user_data.character_coins);
+                                localThis.localstorage.setData('playerLevel', response.user_data.character_level);
+                                localThis.localstorage.setData('maxGameLevel', response.user_data.max_game_level);
+                                localThis.localstorage.setData('playerName', response.user_data.character_name);
+                            }
+                            else
+                            {
+                                localThis.localstorage.onlineBackup();
+                            }
+                        }
                     }
                 }
                 else

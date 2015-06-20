@@ -141,31 +141,7 @@ StickmanTapGame.Game.prototype = {
                 console.log(curDate.toGMTString()+' - backup atempt');
                 this.backupToServerTimer = 0;
                 
-                var username = this.localStorage.getData('username');
-                var gameLevel = this.localStorage.getData('gameLevel');
-                var playerCoins = this.localStorage.getData('playerCoins');
-                var playerLevel = this.localStorage.getData('playerLevel');
-                var maxGameLevel = this.localStorage.getData('maxGameLevel');
-                var playerName = this.localStorage.getData('playerName');
-                var lastAction = this.localStorage.getData('lastAction');
-                
-                var parameters = "username="+username
-                        +"&gameLevel="+gameLevel
-                        +"&playerCoins="+playerCoins
-                        +"&playerLevel="+playerLevel
-                        +"&maxGameLevel="+maxGameLevel
-                        +"&playerName="+playerName
-                        +"&lastAction="+lastAction;
-                stickmanAjax('SetData',
-                function(response){
-                    console.log('backup success');
-                },
-                parameters,
-                function(responseText){
-                    StickmanTapGameOffline = true;
-                    var message = 'There was problem with network, you will continue to play offline';
-                    alert(message);
-                });
+                this.localStorage.onlineBackup();
             }
         }
         
@@ -192,6 +168,12 @@ StickmanTapGame.Game.prototype = {
     
     loadDataFromLocalStorage: function()
     {
+        if(StickmanTapGameOffline === false)
+        {
+            var username = this.localStorage.getData('username');
+            this.localStorage.setData('lastPlayingUsername', username);
+        }
+        
         this.lastAction = this.localStorage.getData('lastAction');
         
         var game_level = this.localStorage.getData('gameLevel');
