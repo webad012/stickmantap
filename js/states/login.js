@@ -162,21 +162,40 @@ StickmanTapGame.Login.prototype = {
                 localThis.blinking.text = response.message;
                 localThis.localstorage.setData('username', username, true);
                 localThis.localstorage.setData('password', password, true);
-                
+                                
                 var lastAction = localThis.localstorage.getData('lastAction');
-                
+                                
                 if(response.user_data.last_action !== lastAction)
                 {
                     var lastPlayingUsername = localThis.localstorage.getData('lastPlayingUsername');
                     if(lastPlayingUsername === username)
                     {
-                        if(response.user_data.last_action < lastAction)
+                        var dbDate = new Date(response.user_data.last_action * 1000);
+                        var gameDate = new Date(lastAction * 1000);
+                        
+                        var message = 'Login successfull.\n\
+                                \nThere is game data on this device:';
+                        message += '\n - local time:\t'+gameDate.toGMTString();
+                        message += '\n - local char level:\t'+localThis.localstorage.getData('playerLevel');
+                        message += '\n - server time:\t'+dbDate.toGMTString();
+                        message += '\n - server char level:\t'+response.user_data.character_level;
+                        message += '\n\n Would you like to load server data?';
+                        message += '\n (yes: server data; no: local data)';
+                        if (window.confirm(message)) 
+                        {
+                            localThis.localstorage.setData('gameLevel', response.user_data.character_game_level, true);
+                            localThis.localstorage.setData('playerCoins', response.user_data.character_coins, true);
+                            localThis.localstorage.setData('playerLevel', response.user_data.character_level, true);
+                            localThis.localstorage.setData('maxGameLevel', response.user_data.max_game_level, true);
+                            localThis.localstorage.setData('playerName', response.user_data.character_name, true);
+                        }
+                        else
                         {
                             localThis.localstorage.onlineBackup();
                         }
                     }
                     else
-                    {
+                    {                        
                         if(typeof lastPlayingUsername !== 'undefined' 
                                 && lastPlayingUsername.length !== null
                                 && lastPlayingUsername.length > 0)
@@ -217,7 +236,7 @@ StickmanTapGame.Login.prototype = {
                 {
 //                    console.log('same');
                 }
-                
+                                
                 localThis.state.start('Game');
             }
             else
