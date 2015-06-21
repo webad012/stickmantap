@@ -119,10 +119,8 @@ StickmanTapGame.Game.prototype = {
     
     update: function()
     {
-        this.dpsCheckTimer += this.game.time.elapsed;
-        if ( this.dpsCheckTimer >= 500 ) // 0.5s
+        if ( this.dpsCheckTimer < this.game.time.time ) // 0.5s
         {
-            this.dpsCheckTimer = 0;
             var dps_sum = 0;
             
             var current_time = (new Date()).getTime();
@@ -139,38 +137,40 @@ StickmanTapGame.Game.prototype = {
             this.currentDPS = dps_sum;
             
             this.refreshTexts();
+            
+            this.dpsCheckTimer = this.game.time.time + 500; // 0.5s
         }
         
         if(StickmanTapGameOffline === false)
         {
-            this.backupToServerTimer += this.game.time.elapsed;
-            if ( this.backupToServerTimer >= (1000 * 60) ) // 1min
+            if ( this.backupToServerTimer < this.game.time.time ) // 1min
             {
                 var curDate = new Date();
                 console.log(curDate.toGMTString()+' - backup atempt');
-                this.backupToServerTimer = 0;
                 
                 this.localStorage.onlineBackup();
+                
+                this.backupToServerTimer = this.game.time.time + (1000 * 60); // 1min
             }
         }
         
         if(this.playerCanAttack === true)
         {
-            this.playerAttackTimer += this.game.time.elapsed;
-            if ( this.playerAttackTimer >= 1000 ) // 1s
+            if ( this.playerAttackTimer < this.game.time.time ) // 1s
             {
-                this.playerAttackTimer = 0;
                 this.playerAttack();
+                
+                this.playerAttackTimer = this.game.time.time + 1000; // 1s
             }
         }
         
         if(this.monsterCanAttack === true)
         {
-            this.monsterAttackTimer += this.game.time.elapsed;
-            if ( this.monsterAttackTimer >= 1000 ) // 1s
+            if ( this.monsterAttackTimer < this.game.time.time ) // 1s
             {
-                this.monsterAttackTimer = 0;
                 this.monsterAttack();
+                
+                this.monsterAttackTimer = this.game.time.time + 1000; // 1s
             }
         }
     },
