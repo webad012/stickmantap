@@ -1,9 +1,13 @@
 var LocalStorage = function () {
-    this.setData = function(name, data)
+    this.setData = function(name, data, without_last_action)
     {
         localStorage.setItem(name, data);
         var lastAction = Math.floor(Date.now() / 1000);
-        localStorage.setItem('lastAction', lastAction);
+        
+        if(without_last_action !== true)
+        {
+            localStorage.setItem('lastAction', lastAction);
+        }
     };
     
     this.getData = function(name)

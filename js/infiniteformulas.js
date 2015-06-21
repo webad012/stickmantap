@@ -11,7 +11,7 @@ var InfiniteFormulas = {
     getPlayerLevelUpgradeCost: function(playerLevel)
     {
 //        var playerLevelUpgradeCost = playerLevel * 10 + (playerLevel * 5);
-        var playerLevelUpgradeCost = Math.pow(playerLevel, 4);
+        var playerLevelUpgradeCost = Math.pow(playerLevel, 3.5);
         return playerLevelUpgradeCost;
     },
     

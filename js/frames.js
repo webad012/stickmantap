@@ -240,6 +240,7 @@ var SettingsFrame = function(player)
 
 var StatisticsFrame = function(maxGameLevel)
 {
+    this.frameChildren = [];
     
     this.frame = StickmanTapGame.game.add.sprite(StickmanTapGame.game.world.centerX, 
                                                 StickmanTapGame.game.world.centerY, 
@@ -256,16 +257,54 @@ var StatisticsFrame = function(maxGameLevel)
                                     +InfiniteFormulas.humanReadableSize(maxGameLevel), 
                                     { font: '20px Arial', fill: '#000' });
     this.maxGameLevelLabel.anchor.setTo(0, 0.5);
-    
+    this.frameChildren.push(this.maxGameLevelLabel);
     
     this.frameLabel = StickmanTapGame.game.add.text(StickmanTapGame.game.world.centerX, 
                                                     StickmanTapGame.game.world.centerY+200, 
                                                     'Click outside to continue', 
                                                     { font: '15px Arial', fill: '#000' });
     this.frameLabel.anchor.setTo(0.5, 0.5);
+    this.frameChildren.push(this.frameLabel);
 
     this.frameShown = true;
-    this.frameChildren = [this.frameLabel, this.maxGameLevelLabel];
+    
+    this.close = function()
+    {
+        close(this);
+    };
+    
+    function close(thisFrame)
+    {
+        thisFrame.frameChildren.forEach(function(element){element.destroy();});
+        thisFrame.frame.destroy();
+    }
+};
+
+var LeaderboardsFrame = function(maxGameLevel)
+{
+    localThis = this;
+    this.frameChildren = [];
+    
+    this.frame = StickmanTapGame.game.add.sprite(StickmanTapGame.game.world.centerX, 
+                                                StickmanTapGame.game.world.centerY, 
+                                                'frame', 
+                                                StickmanTapGame.characterMenuGroup);
+    this.frame.anchor.setTo(0.5, 0.5);
+    this.frame.inputEnabled = true;
+    
+    this.statusLabel = StickmanTapGame.game.add.text(StickmanTapGame.game.world.centerX, 
+                                    StickmanTapGame.game.world.centerY-200, 
+//                                    'Loading', 
+                                    'Comming soon', 
+                                    { font: '20px Arial', fill: '#000' });
+    this.statusLabel.anchor.setTo(0.5, 0.5);
+    this.frameChildren.push(this.statusLabel);
+
+//    stickmanAjax('LoadLeaderboards', function(response){
+////        localThis.onSuccess(response);
+//    });
+
+    this.frameShown = true;
     
     this.close = function()
     {

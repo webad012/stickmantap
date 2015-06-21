@@ -1,4 +1,4 @@
-/* global Phaser, InfiniteFormulas */
+/* global Phaser, InfiniteFormulas, StickmanTapGameOffline */
 
 var StickmanTapGame = StickmanTapGame || {};
  
@@ -96,10 +96,14 @@ StickmanTapGame.Game.prototype = {
         this.profileButton.anchor.setTo(0.5, 0.5);
         this.profileButton.inputEnabled = true;
         this.profileButton.events.onInputDown.add(this.onProfileButtonClick, this);
-        this.settingsButton = this.game.add.sprite(175, this.game.world.centerY+200, 'statistics', this.bottomButtonsGroup);
-        this.settingsButton.anchor.setTo(0.5, 0.5);
-        this.settingsButton.inputEnabled = true;
-        this.settingsButton.events.onInputDown.add(this.onStatisticsButtonClick, this);
+        this.statisticsButton = this.game.add.sprite(135, this.game.world.centerY+200, 'statistics', this.bottomButtonsGroup);
+        this.statisticsButton.anchor.setTo(0.5, 0.5);
+        this.statisticsButton.inputEnabled = true;
+        this.statisticsButton.events.onInputDown.add(this.onStatisticsButtonClick, this);
+        this.leadedrboardsButton = this.game.add.sprite(210, this.game.world.centerY+200, 'trophyicon', this.bottomButtonsGroup);
+        this.leadedrboardsButton.anchor.setTo(0.5, 0.5);
+        this.leadedrboardsButton.inputEnabled = true;
+        this.leadedrboardsButton.events.onInputDown.add(this.onLeadedrboardsButtonClick, this);
         this.settingsButton = this.game.add.sprite(300, this.game.world.centerY+200, 'settings', this.bottomButtonsGroup);
         this.settingsButton.anchor.setTo(0.5, 0.5);
         this.settingsButton.inputEnabled = true;
@@ -173,16 +177,6 @@ StickmanTapGame.Game.prototype = {
     
     loadDataFromLocalStorage: function()
     {
-        if(StickmanTapGameOffline === false)
-        {
-            var username = this.localStorage.getData('username');
-            this.localStorage.setData('lastPlayingUsername', username);
-        }
-        else
-        {
-            this.localStorage.setData('lastPlayingUsername', '');
-        }
-        
         this.lastAction = this.localStorage.getData('lastAction');
         
         var game_level = this.localStorage.getData('gameLevel');
@@ -221,6 +215,12 @@ StickmanTapGame.Game.prototype = {
         this.playerLevel = parseInt(player_level);
         this.maxGameLevel = parseInt(max_game_level);
         this.playerName = player_name;
+        
+        
+        if(StickmanTapGameOffline === true)
+        {
+            this.localStorage.setData('lastPlayingUsername', '');
+        }
     },
     
     onNextEnemyClick: function()
@@ -245,6 +245,12 @@ StickmanTapGame.Game.prototype = {
     onStatisticsButtonClick: function()
     {
         this.frame = new StatisticsFrame(this.maxGameLevel);
+        this.frameShown = true;
+    },
+    
+    onLeadedrboardsButtonClick: function()
+    {
+        this.frame = new LeaderboardsFrame();
         this.frameShown = true;
     },
     
@@ -517,7 +523,7 @@ StickmanTapGame.Game.prototype = {
         
         var resultMadeCoinsWhileOffGame = monstersPosiblyKilled * monsterGoldDrop;
         resultMadeCoinsWhileOffGame = Math.floor(resultMadeCoinsWhileOffGame/10);
-        
+                
         if(resultMadeCoinsWhileOffGame > 0)
         {
             this.frame = new OffGameCoinsFrame(resultMadeCoinsWhileOffGame, this.player);

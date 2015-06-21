@@ -160,8 +160,8 @@ StickmanTapGame.Login.prototype = {
             if(response.message === 'success')
             {
                 localThis.blinking.text = response.message;
-                localThis.localstorage.setData('username', username);
-                localThis.localstorage.setData('password', password);
+                localThis.localstorage.setData('username', username, true);
+                localThis.localstorage.setData('password', password, true);
                 
                 var lastAction = localThis.localstorage.getData('lastAction');
                 
@@ -181,11 +181,11 @@ StickmanTapGame.Login.prototype = {
                                 && lastPlayingUsername.length !== null
                                 && lastPlayingUsername.length > 0)
                         {
-                            localThis.localstorage.setData('gameLevel', response.user_data.character_game_level);
-                            localThis.localstorage.setData('playerCoins', response.user_data.character_coins);
-                            localThis.localstorage.setData('playerLevel', response.user_data.character_level);
-                            localThis.localstorage.setData('maxGameLevel', response.user_data.max_game_level);
-                            localThis.localstorage.setData('playerName', response.user_data.character_name);
+                            localThis.localstorage.setData('gameLevel', response.user_data.character_game_level, true);
+                            localThis.localstorage.setData('playerCoins', response.user_data.character_coins, true);
+                            localThis.localstorage.setData('playerLevel', response.user_data.character_level, true);
+                            localThis.localstorage.setData('maxGameLevel', response.user_data.max_game_level, true);
+                            localThis.localstorage.setData('playerName', response.user_data.character_name, true);
                         }
                         else
                         {
@@ -200,11 +200,11 @@ StickmanTapGame.Login.prototype = {
                             message += '\n (yes: server data; no: local data)';
                             if (window.confirm(message)) 
                             {
-                                localThis.localstorage.setData('gameLevel', response.user_data.character_game_level);
-                                localThis.localstorage.setData('playerCoins', response.user_data.character_coins);
-                                localThis.localstorage.setData('playerLevel', response.user_data.character_level);
-                                localThis.localstorage.setData('maxGameLevel', response.user_data.max_game_level);
-                                localThis.localstorage.setData('playerName', response.user_data.character_name);
+                                localThis.localstorage.setData('gameLevel', response.user_data.character_game_level, true);
+                                localThis.localstorage.setData('playerCoins', response.user_data.character_coins, true);
+                                localThis.localstorage.setData('playerLevel', response.user_data.character_level, true);
+                                localThis.localstorage.setData('maxGameLevel', response.user_data.max_game_level, true);
+                                localThis.localstorage.setData('playerName', response.user_data.character_name, true);
                             }
                             else
                             {

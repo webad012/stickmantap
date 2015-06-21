@@ -6,6 +6,7 @@ var StickmanTapGame = StickmanTapGame || {};
 
 //StickmanTapGame.game = new Phaser.Game(720, 1280, Phaser.AUTO, '');
 StickmanTapGame.game = new Phaser.Game(360, 640, Phaser.AUTO, '');
+//StickmanTapGame.game = new Phaser.Game(360, 640, Phaser.CANVAS, '');
 //StickmanTapGame.game = new Phaser.Game(640, 360, Phaser.AUTO, '');
 
 StickmanTapGame.game.state.add('Boot', StickmanTapGame.Boot);
