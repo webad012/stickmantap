@@ -56,6 +56,11 @@ var ProfileFrame = function(player)
 
             thisFrame.localstorage.setData('playerLevel', thisFrame.player.level);
             thisFrame.localstorage.setData('playerCoins', thisFrame.player.coins);
+            
+            if(StickmanTapGameOffline === false)
+            {
+                thisFrame.localstorage.onlineBackup();
+            }
 
             refreshTexts(thisFrame);
         }
