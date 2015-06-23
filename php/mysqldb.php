@@ -140,3 +140,49 @@ function setData($db, $username, $gameLevel, $playerCoins,
     
     return $result;
 }
+
+function loadLeaderboards($db, $username)
+{
+    $leaderboard = array();
+    
+    $query = "SELECT @rn:=@rn+1 AS rank, username, character_name, max_game_level 
+                FROM (
+                        SELECT username, character_name, max_game_level 
+                        FROM stickmantap_users 
+                        order by max_game_level desc
+                ) t1, (SELECT @rn:=0) t2;";
+    $stmt = $db->query($query);
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $users_position = -1;
+    $count = 1;
+    foreach($results as $row)
+    {   
+        if($row['username'] === $username)
+        {
+            $users_position = $row[rank];
+        }
+        
+        if($count < 100)
+        {
+            $leaderboard[] = array(
+                'character_name' => $row['character_name'],
+                'max_game_level' => $row['max_game_level']
+            );
+        }
+        
+        $count++;
+    }
+    
+    if($users_position === -1)
+    {
+        throw new Exception('No user found');
+    }
+    
+    $result = array(
+        'leaderboard' => $leaderboard,
+        'users_position' => $users_position
+    );
+    
+    return $result;
+}

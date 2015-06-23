@@ -81,6 +81,18 @@ if(isset($callback))
         
         echo $callback.'('.$data.');';
     }
+    else if($action == 'LoadLeaderboards')
+    {
+        $username = filter_input(INPUT_GET, 'username');
+        
+        $message = loadLeaderboards($db, $username);
+        
+        $data['status'] = 'success';
+        $data['message'] = $message;
+        $data = json_encode($data);
+        
+        echo $callback.'('.$data.');';
+    }
     else
     {
         $data['status'] = 'failure';

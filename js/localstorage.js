@@ -49,5 +49,5 @@ var LocalStorage = function () {
                 alert(message);
             });
         }
-    }
+    };
 };

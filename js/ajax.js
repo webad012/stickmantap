@@ -21,6 +21,7 @@ function stickmanAjax(action, success_function, parameters, error_function)
         url: api_url,
         dataType: 'jsonp',
         jsonp: 'callback',
+        async: true,
         success: function(response){
             if(response.status === 'success')
             {
