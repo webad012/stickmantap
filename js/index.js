@@ -1,6 +1,7 @@
 /* global Phaser */
 
 var StickmanTapGameOffline = false;
+var StickmanTapGameLastTimeOnlineBackup = Math.floor(Date.now() / 1000); // timestamp
 
 var StickmanTapGame = StickmanTapGame || {};
 

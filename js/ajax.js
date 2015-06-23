@@ -1,48 +1,51 @@
 /* global StickmanTapGame, StickmanTapDefaultConf */
 
 function stickmanAjax(action, success_function, parameters, error_function)
-{    
-    var api_url = StickmanTapDefaultConf.apiUrl;
-    
-    api_url += "?action="+action;
-    if(typeof parameters !== "undefined" && parameters !== "")
+{
+    if(StickmanTapGameOffline === false)
     {
-        api_url += "&"+parameters;
-    }
-    
-    if(typeof error_function === 'undefined')
-    {
-        error_function = function(responseText){
-            stickanAjaxFailure(responseText);
-        };
-    }
-        
-    $.ajax({
-        url: api_url,
-        dataType: 'jsonp',
-        jsonp: 'callback',
-        async: true,
-        success: function(response){
-            if(response.status === 'success')
-            {
-                success_function(response);
-            }
-            else
-            {
-                if(typeof response.message !== 'undefined')
+        var api_url = StickmanTapDefaultConf.apiUrl;
+
+        api_url += "?action="+action;
+        if(typeof parameters !== "undefined" && parameters !== "")
+        {
+            api_url += "&"+parameters;
+        }
+
+        if(typeof error_function === 'undefined')
+        {
+            error_function = function(responseText){
+                stickanAjaxFailure(responseText);
+            };
+        }
+
+        $.ajax({
+            url: api_url,
+            dataType: 'jsonp',
+            jsonp: 'callback',
+            async: true,
+            success: function(response){
+                if(response.status === 'success')
                 {
-                    stickanAjaxFailure(JSON.stringify(response.message));
+                    success_function(response);
                 }
                 else
                 {
-                    stickanAjaxFailure(JSON.stringify(response));
+                    if(typeof response.message !== 'undefined')
+                    {
+                        stickanAjaxFailure(JSON.stringify(response.message));
+                    }
+                    else
+                    {
+                        stickanAjaxFailure(JSON.stringify(response));
+                    }
                 }
+            },
+            error: function(xhr){
+                error_function(xhr.responseText);
             }
-        },
-        error: function(xhr){
-            error_function(xhr.responseText);
-        }
-    });
+        });
+    }
 }
 
 function stickanAjaxFailure(reason)

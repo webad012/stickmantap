@@ -23,8 +23,11 @@ var LocalStorage = function () {
     
     this.onlineBackup = function()
     {
-        if(StickmanTapGameOffline === false)
+        var curTime = Math.floor(Date.now() / 1000);
+        if(curTime-StickmanTapGameLastTimeOnlineBackup > 10) // 10s
         {
+            StickmanTapGameLastTimeOnlineBackup = curTime;
+            
             var username = localStorage.getItem('username');
             var gameLevel = localStorage.getItem('gameLevel');
             var playerCoins = localStorage.getItem('playerCoins');

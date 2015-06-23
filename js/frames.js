@@ -304,117 +304,92 @@ var LeaderboardsFrame = function(maxGameLevel)
     this.statusLabel.anchor.setTo(0.5, 0.5);
     this.frameChildren.push(this.statusLabel);
 
-    var localstorage = new LocalStorage();
-    var username = localstorage.getData('username');
-    stickmanAjax('LoadLeaderboards', function(response){
-        localThis.statusLabel.text = '';
-        
-        if(response.status === 'success')
-        {
-            var leaderboard = response.message.leaderboard;
-            var player_position = parseInt(response.message.users_position);
-            
-            var start_pos = 0;
-            var stop_pos = 10;
+    if(StickmanTapGameOffline === false)
+    {
+        var localstorage = new LocalStorage();
+        var username = localstorage.getData('username');
+        stickmanAjax('LoadLeaderboards', function(response){
+            localThis.statusLabel.text = '';
 
-            if(player_position > 100)
+            if(response.status === 'success')
             {
-                start_pos = 90;
-                stop_pos = 100;
+                var leaderboard = response.message.leaderboard;
+                var player_position = parseInt(response.message.users_position);
+
+                var start_pos = 0;
+                var stop_pos = 10;
+
+                if(player_position > 100)
+                {
+                    start_pos = 90;
+                    stop_pos = 100;
+                }
+                else
+                {
+                    var decade_pos = Math.floor(player_position/10);
+
+                    start_pos = decade_pos*10;
+                    stop_pos = start_pos+10;
+                }
+                for (var i = start_pos; i < stop_pos; i++) 
+                {
+                    var font = '15px Arial';
+                    var yPosBase = StickmanTapGame.game.world.centerY-150;
+                    if(i === player_position-1)
+                    {
+                        font = 'bold 20px Arial';
+                        yPosBase -= 5;
+                    }
+
+                    var rankLabel = StickmanTapGame.game.add.text(50, 
+                                                yPosBase + ((i-start_pos)*30), 
+                                                (i+1)+'.', 
+                                                { font: font, fill: '#000' });
+                    localThis.statusLabel.anchor.setTo(0, 0);
+                    localThis.frameChildren.push(rankLabel);
+
+                    var charnameLabel = StickmanTapGame.game.add.text(100, 
+                                                yPosBase + ((i-start_pos)*30), 
+                                                leaderboard[i].character_name, 
+                                                { font: font, fill: '#000' });
+                    localThis.statusLabel.anchor.setTo(0, 0);
+                    localThis.frameChildren.push(charnameLabel);
+
+                    var valueLabel = StickmanTapGame.game.add.text(200, 
+                                                yPosBase + ((i-start_pos)*30), 
+                                                leaderboard[i].max_game_level, 
+                                                { font: font, fill: '#000' });
+                    localThis.statusLabel.anchor.setTo(0, 0);
+                    localThis.frameChildren.push(valueLabel);
+
+                    var spacerLabel = StickmanTapGame.game.add.text(50, 
+                                                StickmanTapGame.game.world.centerY-150 + ((i-start_pos)*30), 
+                                                '_______________________________', 
+                                                { font: '15px Arial', fill: '#000' });
+                    localThis.statusLabel.anchor.setTo(0, 0);
+                    localThis.frameChildren.push(spacerLabel);
+                }
             }
             else
             {
-                var decade_pos = Math.floor(player_position/10);
-                
-                start_pos = decade_pos*10;
-                stop_pos = start_pos+10;
+                StickmanTapGameOffline = true;
+                var message = 'There was problem with network, you will continue to play offline';
+                alert(message);
             }
-            for (var i = start_pos; i < stop_pos; i++) 
-            {
-                var font = '15px Arial';
-                var yPosBase = StickmanTapGame.game.world.centerY-150;
-                if(i === player_position-1)
-                {
-                    font = 'bold 20px Arial';
-                    yPosBase -= 5;
-                }
-                
-                var rankLabel = StickmanTapGame.game.add.text(50, 
-                                            yPosBase + ((i-start_pos)*30), 
-                                            (i+1)+'.', 
-                                            { font: font, fill: '#000' });
-                localThis.statusLabel.anchor.setTo(0, 0);
-                localThis.frameChildren.push(rankLabel);
+        },
+        "username="+username,
+        function(responseText){
+            localThis.statusLabel.text = 'Error';
 
-                var charnameLabel = StickmanTapGame.game.add.text(100, 
-                                            yPosBase + ((i-start_pos)*30), 
-                                            leaderboard[i].character_name, 
-                                            { font: font, fill: '#000' });
-                localThis.statusLabel.anchor.setTo(0, 0);
-                localThis.frameChildren.push(charnameLabel);
-
-                var valueLabel = StickmanTapGame.game.add.text(200, 
-                                            yPosBase + ((i-start_pos)*30), 
-                                            leaderboard[i].max_game_level, 
-                                            { font: font, fill: '#000' });
-                localThis.statusLabel.anchor.setTo(0, 0);
-                localThis.frameChildren.push(valueLabel);
-
-                var spacerLabel = StickmanTapGame.game.add.text(50, 
-                                            StickmanTapGame.game.world.centerY-150 + ((i-start_pos)*30), 
-                                            '_______________________________', 
-                                            { font: '15px Arial', fill: '#000' });
-                localThis.statusLabel.anchor.setTo(0, 0);
-                localThis.frameChildren.push(spacerLabel);
-            }
-        }
-        else
-        {
             StickmanTapGameOffline = true;
             var message = 'There was problem with network, you will continue to play offline';
             alert(message);
-        }
-    },
-    "username="+username,
-    function(responseText){
-        localThis.statusLabel.text = 'Error';
-        
-        StickmanTapGameOffline = true;
-        var message = 'There was problem with network, you will continue to play offline';
-        alert(message);
-    });
-
-
-//    for (var i = 1; i <= 10; i++) 
-//    {
-//        var rankLabel = StickmanTapGame.game.add.text(50, 
-//                                    StickmanTapGame.game.world.centerY-150 + (i*30), 
-//                                    i+'.', 
-//                                    { font: '15px Arial', fill: '#000' });
-//        this.statusLabel.anchor.setTo(0, 0.5);
-//        this.frameChildren.push(rankLabel);
-//        
-//        var charnameLabel = StickmanTapGame.game.add.text(100, 
-//                                    StickmanTapGame.game.world.centerY-150 + (i*30), 
-//                                    'Player'+i, 
-//                                    { font: '15px Arial', fill: '#000' });
-//        this.statusLabel.anchor.setTo(0, 0.5);
-//        this.frameChildren.push(charnameLabel);
-//        
-//        var valueLabel = StickmanTapGame.game.add.text(200, 
-//                                    StickmanTapGame.game.world.centerY-150 + (i*30), 
-//                                    i*10, 
-//                                    { font: '15px Arial', fill: '#000' });
-//        this.statusLabel.anchor.setTo(0, 0.5);
-//        this.frameChildren.push(valueLabel);
-//        
-//        var spacerLabel = StickmanTapGame.game.add.text(50, 
-//                                    StickmanTapGame.game.world.centerY-150 + (i*30), 
-//                                    '_______________________________', 
-//                                    { font: '15px Arial', fill: '#000' });
-//        this.statusLabel.anchor.setTo(0, 0.5);
-//        this.frameChildren.push(spacerLabel);
-//    }
+        });
+    }
+    else
+    {
+        this.statusLabel.text = 'Offline play';
+    }
 
     this.frameShown = true;
     

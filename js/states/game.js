@@ -542,6 +542,8 @@ StickmanTapGame.Game.prototype = {
    
         this.maxGameLevel = levelNum;
         this.localStorage.setData('maxGameLevel', this.maxGameLevel);
+        
+        this.localStorage.onlineBackup();
     },
     
     getMonsterLevelDefeatableByPlayer: function(assumedMaxMonsterLevel, playerLevel)
