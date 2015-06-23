@@ -313,6 +313,37 @@ var LeaderboardsFrame = function(maxGameLevel)
 
             if(response.status === 'success')
             {
+                var headerFont = '15px Arial';
+                var headerYPosBase = StickmanTapGame.game.world.centerY-200;
+
+                var rankHeaderLabel = StickmanTapGame.game.add.text(50, 
+                                            headerYPosBase, 
+                                            'Rank', 
+                                            { font: headerFont, fill: '#000' });
+                localThis.statusLabel.anchor.setTo(0, 0);
+                localThis.frameChildren.push(rankHeaderLabel);
+
+                var charnameHeaderLabel = StickmanTapGame.game.add.text(100, 
+                                            headerYPosBase, 
+                                            'Player', 
+                                            { font: headerFont, fill: '#000' });
+                localThis.statusLabel.anchor.setTo(0, 0);
+                localThis.frameChildren.push(charnameHeaderLabel);
+
+                var valueHeaderLabel = StickmanTapGame.game.add.text(200, 
+                                            headerYPosBase, 
+                                            'Game level', 
+                                            { font: headerFont, fill: '#000' });
+                localThis.statusLabel.anchor.setTo(0, 0);
+                localThis.frameChildren.push(valueHeaderLabel);
+
+                var spacerHeaderLabel = StickmanTapGame.game.add.text(50, 
+                                            headerYPosBase, 
+                                            '_______________________________', 
+                                            { font: headerFont, fill: '#000' });
+                localThis.statusLabel.anchor.setTo(0, 0);
+                localThis.frameChildren.push(spacerHeaderLabel);
+                
                 var leaderboard = response.message.leaderboard;
                 var player_position = parseInt(response.message.users_position);
 
