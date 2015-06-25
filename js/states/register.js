@@ -1,5 +1,3 @@
-/* global StickmanTapGameOffline */
-
 var StickmanTapGame = StickmanTapGame || {};
  
 StickmanTapGame.Register = function(){};

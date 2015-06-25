@@ -195,9 +195,9 @@ StickmanTapGame.Login.prototype = {
                         }
                     }
                     else
-                    {                        
+                    {
                         if(typeof lastPlayingUsername !== 'undefined' 
-                                && lastPlayingUsername.length !== null
+                                && lastPlayingUsername !== null
                                 && lastPlayingUsername.length > 0)
                         {
                             localThis.localstorage.setData('gameLevel', response.user_data.character_game_level, true);
