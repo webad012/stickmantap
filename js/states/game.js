@@ -51,7 +51,6 @@ StickmanTapGame.Game.prototype = {
         this.characterMenuGroup = this.game.add.group();
         this.characterMenuGroup.z = 6;
         
-        this.localStorage = new LocalStorage();
         this.loadDataFromLocalStorage();
         
         this.frameShown = false;
@@ -108,6 +107,12 @@ StickmanTapGame.Game.prototype = {
         this.settingsButton.anchor.setTo(0.5, 0.5);
         this.settingsButton.inputEnabled = true;
         this.settingsButton.events.onInputDown.add(this.onSettingsButtonClick, this);
+        
+//        this.tapmark = StickmanTapGame.game.add.sprite(0, 0, 'tapmark');
+//        this.tapmark.anchor.setTo(0.5, 0.5);
+//        this.tapmark.animations.add('tapanimation', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 40);
+//        this.popupGroup.add(this.tapmark);
+//        this.tapmark.visible = false;
                         
         this.loadLevel(this.gameLevel);
         
@@ -123,7 +128,7 @@ StickmanTapGame.Game.prototype = {
         {
             var dps_sum = 0;
             
-            var current_time = (new Date()).getTime();
+            var current_time = Date.now();
             var newDamagesInLastSecond = [];
             this.damagesInLastSecond.forEach(function(element){
                 if(element['time'] > current_time-1000)
@@ -145,10 +150,9 @@ StickmanTapGame.Game.prototype = {
         {
             if ( this.backupToServerTimer < this.game.time.time ) // 1min
             {
-                var curDate = new Date();
-                console.log(curDate.toGMTString()+' - backup atempt');
+//                console.log(Date.now()+' - backup atempt');
                 
-                this.localStorage.onlineBackup();
+                LocalStorage.onlineBackup();
                 
                 this.backupToServerTimer = this.game.time.time + (1000 * 60); // 1min
             }
@@ -177,37 +181,37 @@ StickmanTapGame.Game.prototype = {
     
     loadDataFromLocalStorage: function()
     {
-        this.lastAction = this.localStorage.getData('lastAction');
+        this.lastAction = LocalStorage.getData('lastAction');
         
-        var game_level = this.localStorage.getData('gameLevel');
+        var game_level = LocalStorage.getData('gameLevel');
         if(!game_level)
         {
             game_level = 1;
-            this.localStorage.setData('gameLevel', game_level);
+            LocalStorage.setData('gameLevel', game_level);
         }
-        var player_coins = this.localStorage.getData('playerCoins');
+        var player_coins = LocalStorage.getData('playerCoins');
         if(!player_coins)
         {
             player_coins = 0;
-            this.localStorage.setData('playerCoins', player_coins);
+            LocalStorage.setData('playerCoins', player_coins);
         }
-        var player_level = this.localStorage.getData('playerLevel');
+        var player_level = LocalStorage.getData('playerLevel');
         if(!player_level)
         {
             player_level = 1;
-            this.localStorage.setData('playerLevel', player_level);
+            LocalStorage.setData('playerLevel', player_level);
         }
-        var max_game_level = this.localStorage.getData('maxGameLevel');
+        var max_game_level = LocalStorage.getData('maxGameLevel');
         if(!max_game_level)
         {
             max_game_level = 1;
-            this.localStorage.setData('maxGameLevel', max_game_level);
+            LocalStorage.setData('maxGameLevel', max_game_level);
         }
-        var player_name = this.localStorage.getData('playerName');
+        var player_name = LocalStorage.getData('playerName');
         if(!player_name)
         {
             player_name = "Player";
-            this.localStorage.setData('playerName', player_name);
+            LocalStorage.setData('playerName', player_name);
         }
         
         this.gameLevel = parseInt(game_level);
@@ -219,7 +223,7 @@ StickmanTapGame.Game.prototype = {
         
         if(StickmanTapGameOffline === true)
         {
-            this.localStorage.setData('lastPlayingUsername', '');
+            LocalStorage.setData('lastPlayingUsername', '');
         }
     },
     
@@ -256,7 +260,7 @@ StickmanTapGame.Game.prototype = {
     
     onBackgroundClick: function(event)
     {
-        if(this.frameShown)
+        if(this.frameShown === true)
         {
             this.frame.close();
             this.frameShown = false;
@@ -279,7 +283,7 @@ StickmanTapGame.Game.prototype = {
             
             this.damagesInLastSecond.push({
                 damage: playerDamage,
-                time: (new Date()).getTime()
+                time: Date.now()
             });
 
             this.animatePopuptext(this.monster.sprite.x, 
@@ -364,7 +368,7 @@ StickmanTapGame.Game.prototype = {
         this.player.health = this.player.getMaxHealth();
         
         var background_index = this.nextLevelBackgroundIndex();
-        var monster_spritesheet_index = Math.floor((Math.random() * this.monster_spritesheets.length));
+        var monster_spritesheet_index = ((Math.random() * this.monster_spritesheets.length)) | 0;
         
         this.background = this.game.add.sprite(0,0, this.backgrounds[background_index]);
         this.background.inputEnabled = true;
@@ -426,7 +430,7 @@ StickmanTapGame.Game.prototype = {
             new_level = 1;
         }
         
-        this.localStorage.setData('gameLevel', new_level);
+        LocalStorage.setData('gameLevel', new_level);
         
         var fadeOutTween = this.game.add.tween(this.player.sprite).to( 
                             { alpha: 0 }, 500, 
@@ -453,7 +457,7 @@ StickmanTapGame.Game.prototype = {
                         { font: "30px Arial", fill: "#FF0", stroke: "#000", strokeThickness: 1});
 
         this.player.coins += monster_gold_drop;
-        this.localStorage.setData('playerCoins', this.player.coins);
+        LocalStorage.setData('playerCoins', this.player.coins);
         
         var new_level = this.gameLevel;
         if(this.wasRevertedInLevel === false)
@@ -468,7 +472,7 @@ StickmanTapGame.Game.prototype = {
     {
         this.inAnimation = true;
         
-        this.localStorage.setData('gameLevel', levelNum);
+        LocalStorage.setData('gameLevel', levelNum);
         
         if(levelNum > this.maxGameLevel)
         {
@@ -491,6 +495,17 @@ StickmanTapGame.Game.prototype = {
         tapmark.animations.add('tapanimation', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
         tapmark.animations.play('tapanimation', 40, false, true);
         this.popupGroup.add(tapmark);
+        
+//        this.tapmark.x = this.game.input.x;
+//        this.tapmark.y = this.game.input.y;
+//        this.tapmark.visible = true;
+//        this.tapmark.animations.play('tapanimation');
+//        this.tapmark.events.onAnimationComplete.add(function(sprite){
+//            if(sprite.visible === true)
+//            {
+//                sprite.visible=false;
+//            }
+//        }, this);
     },
     
     animatePopuptext: function(coord_x_start, coord_x_end, coord_y_start, coord_y_end, text, style)
@@ -508,7 +523,7 @@ StickmanTapGame.Game.prototype = {
     
     calculateOffGameCoins: function(lastActiveTimeInSec, playerLevel, gameLevel)
     {
-        var currentTimeInSec = Math.floor(Date.now() / 1000);
+        var currentTimeInSec = (Date.now() / 1000) | 0;
         var offTimeInSec = currentTimeInSec-lastActiveTimeInSec;
         
         var playerDPS = InfiniteFormulas.getPlayerDamage(playerLevel);
@@ -519,10 +534,10 @@ StickmanTapGame.Game.prototype = {
         
         var timePerMonsterInSec = Math.ceil(monsterHealth/playerDPS);
         
-        var monstersPosiblyKilled = Math.floor(offTimeInSec/timePerMonsterInSec);
+        var monstersPosiblyKilled = (offTimeInSec/timePerMonsterInSec) | 0;
         
         var resultMadeCoinsWhileOffGame = monstersPosiblyKilled * monsterGoldDrop;
-        resultMadeCoinsWhileOffGame = Math.floor(resultMadeCoinsWhileOffGame/10);
+        resultMadeCoinsWhileOffGame = (resultMadeCoinsWhileOffGame/10) | 0;
                 
         if(resultMadeCoinsWhileOffGame > 0)
         {
@@ -541,9 +556,9 @@ StickmanTapGame.Game.prototype = {
                                 { font: "30px Arial", fill: "#00F"});
    
         this.maxGameLevel = levelNum;
-        this.localStorage.setData('maxGameLevel', this.maxGameLevel);
+        LocalStorage.setData('maxGameLevel', this.maxGameLevel);
         
-        this.localStorage.onlineBackup();
+        LocalStorage.onlineBackup();
     },
     
     getMonsterLevelDefeatableByPlayer: function(assumedMaxMonsterLevel, playerLevel)
@@ -573,7 +588,7 @@ StickmanTapGame.Game.prototype = {
     
     nextLevelBackgroundIndex: function()
     {        
-        var background_index = Math.floor((Math.random() * this.backgrounds.length));
+        var background_index = this.currentBackgroundSpriteIndex;
         
         for(var i=0; i<5; i++)
         {
@@ -581,7 +596,9 @@ StickmanTapGame.Game.prototype = {
             {
                 this.currentBackgroundSpriteIndex = background_index;
                 break;
-            }            
+            }
+            
+            background_index = ((Math.random() * this.backgrounds.length)) | 0;
         }
         
         return background_index;

@@ -84,15 +84,14 @@ StickmanTapGame.Register.prototype = {
                     alert(response.message);
                     if(response.message === 'success')
                     {
-                        var localstorage = new LocalStorage();
-                        localstorage.setData('username', username);
-                        localstorage.setData('password', password);
+                        LocalStorage.setData('username', username);
+                        LocalStorage.setData('password', password);
                         
                         StickmanTapGame.game.state.start('Login');
                     }
                 },
                 "username="+username+"&password="+password
-                        +"&lastaction="+Math.floor(Date.now() / 1000));
+                        +"&lastaction="+((Date.now() * 0.001)) | 0);
             }
         }, this);
         

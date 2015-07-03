@@ -11,10 +11,7 @@ function Player(name, level, coins, coord_x, coord_y, sprite_indx){
     this.level = level;
     this.health = InfiniteFormulas.getPlayerMaxHealth(this.level);
     this.coins = coins;
-    
-    this.popupGroup = StickmanTapGame.game.add.group();
-    this.popupGroup.z = 5;
-    
+        
     this.getDamage = function()
     {
         return InfiniteFormulas.getPlayerDamage(this.level);

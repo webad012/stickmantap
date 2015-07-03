@@ -3,7 +3,6 @@
 var ProfileFrame = function(player)
 {
     this.player = player;
-    this.localstorage = new LocalStorage();
     
     this.frame = StickmanTapGame.game.add.sprite(StickmanTapGame.game.world.centerX, 
                                                     StickmanTapGame.game.world.centerY, 
@@ -54,12 +53,12 @@ var ProfileFrame = function(player)
             thisFrame.player.coins -= thisFrame.player.getLevelUpgradeCost();
             thisFrame.player.level += 1;
 
-            thisFrame.localstorage.setData('playerLevel', thisFrame.player.level);
-            thisFrame.localstorage.setData('playerCoins', thisFrame.player.coins);
+            LocalStorage.setData('playerLevel', thisFrame.player.level);
+            LocalStorage.setData('playerCoins', thisFrame.player.coins);
             
             if(StickmanTapGameOffline === false)
             {
-                thisFrame.localstorage.onlineBackup();
+                LocalStorage.onlineBackup();
             }
 
             refreshTexts(thisFrame);
@@ -161,8 +160,7 @@ var SettingsFrame = function(player)
         if (newname !== null) {
             player.name = newname;
             pname.text = player.name;
-            var localstorage = new LocalStorage();
-            localstorage.setData('playerName', newname);
+            LocalStorage.setData('playerName', newname);
         }
     }, this);
     this.frameChildren.push(this.playerName);
@@ -178,8 +176,7 @@ var SettingsFrame = function(player)
         this.loggedInLabel.anchor.setTo(0, 0.5);
         this.frameChildren.push(this.loggedInLabel);
 
-        var localstorage = new LocalStorage();
-        var username = localstorage.getData('username');
+        var username = LocalStorage.getData('username');
         this.userName = StickmanTapGame.game.add.text(marginX+100, 
                                                         StickmanTapGame.game.world.centerY-150, 
                                                         username, 
@@ -196,9 +193,8 @@ var SettingsFrame = function(player)
         this.loggedOutLabel.events.onInputDown.add(function(){
             if (window.confirm("Are you sure you want to logout?")) 
             {
-                var localstorage = new LocalStorage();
-                localstorage.setData('username', '');
-                localstorage.setData('password', '');
+                LocalStorage.setData('username', '');
+                LocalStorage.setData('password', '');
                 StickmanTapGame.game.state.start('Login');
             }
         }, this);
@@ -215,8 +211,7 @@ var SettingsFrame = function(player)
     this.factoryResetLabel.events.onInputDown.add(function(){
         if (window.confirm("Are you sure you want to perform factory reset?")) 
         {
-            var localstorage = new LocalStorage();
-            localstorage.factoryReset();
+            LocalStorage.factoryReset();
             StickmanTapGame.game.state.start('Boot');
         }
     }, this);
@@ -306,8 +301,7 @@ var LeaderboardsFrame = function(maxGameLevel)
 
     if(StickmanTapGameOffline === false)
     {
-        var localstorage = new LocalStorage();
-        var username = localstorage.getData('username');
+        var username = LocalStorage.getData('username');
         stickmanAjax('LoadLeaderboards', function(response){
             localThis.statusLabel.text = '';
 
@@ -357,7 +351,7 @@ var LeaderboardsFrame = function(maxGameLevel)
                 }
                 else
                 {
-                    var decade_pos = Math.floor(player_position/10);
+                    var decade_pos = (player_position * 0.1) | 0;
 
                     start_pos = decade_pos*10;
                     stop_pos = start_pos+10;

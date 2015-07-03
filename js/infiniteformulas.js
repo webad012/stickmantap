@@ -18,14 +18,10 @@ var InfiniteFormulas = {
     getMonsterDamage: function(gameLevelNum)
     {
         return Math.ceil(gameLevelNum * 2 + (gameLevelNum * 0.5));
-//        var monsterDamage = Math.pow(gameLevelNum, 3);
-//        return monsterDamage;
     },
     getMonsterGoldDrop: function(gameLevelNum)
     {
-//        return gameLevelNum * 2;
-//        return (gameLevelNum ^ 10) * (gameLevelNum ^ 20);
-        var monsterGoldDrop = Math.floor(Math.pow(gameLevelNum, 2.5));
+        var monsterGoldDrop = (Math.pow(gameLevelNum, 2.5)) | 0;
         return monsterGoldDrop;
     },
     getMonsterMaxHealth: function(gameLevelNum)
@@ -37,13 +33,14 @@ var InfiniteFormulas = {
     
     humanReadableSize: function(size) {
         var thresh = 1000;
+        var thresh_decimal = 0.001;
         if(Math.abs(size) < thresh) {
             return size;
         }
         var units = ['k','M','G','T','P','E','Z','Y'];
         var u = -1;
         do {
-            size /= thresh;
+            size *= thresh_decimal;
             ++u;
         } while(Math.abs(size) >= thresh && u < units.length - 1);
         
