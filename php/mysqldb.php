@@ -160,10 +160,10 @@ function loadLeaderboards($db, $username)
     {   
         if($row['username'] === $username)
         {
-            $users_position = $row[rank];
+            $users_position = $row['rank'];
         }
         
-        if($count < 100)
+        if($count <= 100)
         {
             $leaderboard[] = array(
                 'character_name' => $row['character_name'],

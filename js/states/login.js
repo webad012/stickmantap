@@ -160,6 +160,7 @@ StickmanTapGame.Login.prototype = {
                 localThis.blinking.text = response.message;
                 LocalStorage.setData('username', username, true);
                 LocalStorage.setData('password', password, true);
+                SessionStorage.setData('leaderboard_data', JSON.stringify(response.leaderboards_data));
                                 
                 var lastAction = LocalStorage.getData('lastAction');
                                 

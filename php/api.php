@@ -28,6 +28,8 @@ if(isset($callback))
         $data['gameVersion'] = $current_version;
         $data['downloadUrl'] = $download_url;
         $data = json_encode($data);
+//        $data = actionGetCurrentVersion($db);
+        
         echo $callback.'('.$data.');';
     }
     else if($action == 'Register')
@@ -50,14 +52,17 @@ if(isset($callback))
         
         $message = loginUser($db, $username, $password);
         $user_data = '';
+        $leaderboards_data = '';
         if($message === 'success')
         {
             $user_data = getUserData($db, $username);
+            $leaderboards_data = loadLeaderboards($db, $username);
         }
         
         $data['status'] = 'success';
         $data['message'] = $message;
         $data['user_data'] = $user_data;
+        $data['leaderboards_data'] = $leaderboards_data;
         $data = json_encode($data);
         
         echo $callback.'('.$data.');';
@@ -110,3 +115,31 @@ else
     $data = json_encode($data);
     echo $data;
 }
+
+//function actionGetCurrentVersion($db)
+//{    
+//    $current_version = getCurrentVersionNum($db);
+//    $download_url = getDownloadUrl($db);
+//
+//    $data['status'] = 'success';
+//    $data['gameVersion'] = $current_version;
+//    $data['downloadUrl'] = $download_url;
+//    $data = json_encode($data);
+//    
+//    return $data;
+//}
+//
+//function actionRegister($db)
+//{    
+//    $username = filter_input(INPUT_GET, 'username');
+//    $password = md5(filter_input(INPUT_GET, 'password'));
+//    $lastaction = filter_input(INPUT_GET, 'lastaction');
+//
+//    $message = registerUser($db, $username, $password, $lastaction);
+//
+//    $data['status'] = 'success';
+//    $data['message'] = $message;
+//    $data = json_encode($data);
+//    
+//    return $data;
+//}

@@ -25,6 +25,8 @@ StickmanTapGame.Preload.prototype = {
     this.game.load.image('statistics', 'img/bar_chart_50x50.png');
     this.game.load.image('penicon', 'img/pen_50x50.png');
     this.game.load.image('trophyicon', 'img/trophy_50x50.png');
+    this.game.load.image('arrowleft', 'img/arrow_left.png');
+    this.game.load.image('arrowright', 'img/arrow_right.png');
     
     this.game.load.image('background1', 'img/background3.png');
     this.game.load.image('background2', 'img/background4.png');
