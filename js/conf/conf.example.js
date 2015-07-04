@@ -1,5 +1,5 @@
 
 var StickmanTapDefaultConfExample = {
-    gameVersion: '0.1.4',
+    gameVersion: '0.1.5',
     apiUrl: 'http://localhost/stickmantap/api.php'
 };
