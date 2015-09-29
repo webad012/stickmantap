@@ -1,4 +1,4 @@
-/* global Phaser, InfiniteFormulas, StickmanTapGameOffline */
+/* global Phaser, InfiniteFormulas, StickmanTapGameOffline, LocalStorage */
 
 var StickmanTapGame = StickmanTapGame || {};
  
@@ -48,6 +48,8 @@ StickmanTapGame.Game.prototype = {
         this.bottomButtonsGroup.z = 4;
         this.popupGroup = this.game.add.group();
         this.popupGroup.z = 5;
+//        this.tapmarksGroup = this.game.add.group();
+//        this.tapmarksGroup.z = 5;
         this.characterMenuGroup = this.game.add.group();
         this.characterMenuGroup.z = 6;
         
@@ -113,6 +115,14 @@ StickmanTapGame.Game.prototype = {
 //        this.tapmark.animations.add('tapanimation', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 40);
 //        this.popupGroup.add(this.tapmark);
 //        this.tapmark.visible = false;
+//        this.tapmarksGroup.createMultiple(20, 'tapmark');
+//        this.tapmarksGroup.setAll('anchor.x', 0.5);
+//        this.tapmarksGroup.setAll('anchor.y', 0.5);
+////        this.tapmarksGroup.setAll('animations', 0);
+////        this.tapmarksGroup.forEach(function(item){
+////            item.animations.add('tapanimation', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 40);
+////            item.visible = false;
+////        });
                         
         this.loadLevel(this.gameLevel);
         
@@ -377,10 +387,10 @@ StickmanTapGame.Game.prototype = {
         
         this.monster = new Monster(this.gameLevel, this.monster_spritesheets[monster_spritesheet_index]);
         this.monsterGroup.add(this.monster.sprite);
-        if(gameLevel%5 === 0)
-        {
+//        if(gameLevel%5 === 0)
+//        {
             this.monsterCanAttack = true;
-        }
+//        }
         
         this.playerCanAttack = true;
         
@@ -506,6 +516,22 @@ StickmanTapGame.Game.prototype = {
 //                sprite.visible=false;
 //            }
 //        }, this);
+
+//        var tapmark = this.tapmarksGroup.getFirstExists(false);
+//        tapmark.x = this.game.input.x;
+//        tapmark.y = this.game.input.y;
+//        tapmark.visible = true;
+//////        tapmark.animations.play('tapanimation');
+//        tapmark.animations.add('tapanimation', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+////        tapmark.animations.play('tapanimation', 40, false, true);
+//        tapmark.animations.play('tapanimation', 40);
+////        tapmark.events.onAnimationComplete.add(function(sprite){
+////            if(sprite.visible === true)
+////            {
+////                sprite.visible=false;
+////            }
+////            tapmark.kill();
+////        }, this);
     },
     
     animatePopuptext: function(coord_x_start, coord_x_end, coord_y_start, coord_y_end, text, style)
@@ -575,7 +601,8 @@ StickmanTapGame.Game.prototype = {
             
             var timePerMonsterInSec = Math.ceil(monsterHealth/playerDPS);
             var timePerPlayerInSec = Math.ceil(playerHealth/monsterDamage);
-            if(monsterLevel%5 !== 0 || timePerMonsterInSec < timePerPlayerInSec)
+//            if(monsterLevel%5 !== 0 || timePerMonsterInSec < timePerPlayerInSec)
+            if(timePerMonsterInSec < timePerPlayerInSec)
             {
                 foundMonster = true;
                 break;

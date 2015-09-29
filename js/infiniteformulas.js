@@ -10,14 +10,19 @@ var InfiniteFormulas = {
     },
     getPlayerLevelUpgradeCost: function(playerLevel)
     {
-//        var playerLevelUpgradeCost = playerLevel * 10 + (playerLevel * 5);
-        var playerLevelUpgradeCost = Math.pow(playerLevel, 3.5);
+        var playerLevelUpgradeCost = (Math.pow(playerLevel, 3.5)) | 0;
         return playerLevelUpgradeCost;
     },
     
     getMonsterDamage: function(gameLevelNum)
     {
-        return Math.ceil(gameLevelNum * 2 + (gameLevelNum * 0.5));
+        var boss_multiplicator = 1;
+        if(gameLevelNum % 5 === 0)
+        {
+            boss_multiplicator = 2;
+        }
+        
+        return Math.ceil(gameLevelNum * 2 + (gameLevelNum * 0.5)) * boss_multiplicator;
     },
     getMonsterGoldDrop: function(gameLevelNum)
     {
@@ -26,8 +31,13 @@ var InfiniteFormulas = {
     },
     getMonsterMaxHealth: function(gameLevelNum)
     {
-//        return gameLevelNum * 10;
-        var monsterMaxHealth = Math.pow(gameLevelNum, 2);
+        var boss_multiplicator = 1;
+        if(gameLevelNum % 5 === 0)
+        {
+            boss_multiplicator = 2;
+        }
+        
+        var monsterMaxHealth = Math.pow(gameLevelNum, 2) * boss_multiplicator;
         return monsterMaxHealth;
     },
     
